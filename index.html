@@ -8,442 +8,976 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap"
       rel="stylesheet"
     />
 
     <style>
-      /* ZÁKLAD */
-      * {
+      /* ═══════════════════════════════════════
+         DESIGN TOKENS
+      ═══════════════════════════════════════ */
+      :root {
+        --ink: #111318;
+        --ink-2: #3d4047;
+        --ink-3: #6b7280;
+        --ink-4: #9ca3af;
+        --surface: #ffffff;
+        --surface-2: #f7f8fa;
+        --border: #e8eaed;
+        --accent: #5b5efa;
+        --accent-2: rgba(91, 94, 250, 0.08);
+
+        --font-display: "Fraunces", Georgia, serif;
+        --font-body: "DM Sans", system-ui, sans-serif;
+
+        --space-xs: 8px;
+        --space-sm: 16px;
+        --space-md: 32px;
+        --space-lg: 64px;
+        --space-xl: 120px;
+
+        --radius-sm: 8px;
+        --radius-md: 16px;
+        --radius-lg: 24px;
+
+        --easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      /* ═══════════════════════════════════════
+         RESET & BASE
+      ═══════════════════════════════════════ */
+      *,
+      *::before,
+      *::after {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
-        background: radial-gradient(
-          circle at top center,
-          #ffffff 0%,
-          #eef0f3 100%
-        );
-        background-attachment: fixed;
-        color: #333333;
-        font-family: "Inter", sans-serif;
+        background: var(--surface);
+        color: var(--ink);
+        font-family: var(--font-body);
         font-weight: 300;
+        line-height: 1.65;
         overflow-x: hidden;
-        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
       }
 
-      /* TYPOGRAFIE */
-      h1,
-      h2,
-      h3,
-      h4 {
-        font-family: "Playfair Display", serif;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-      h1 {
-        font-size: 3rem;
-        margin-bottom: 5px;
-      }
-      h2 {
-        font-size: 2rem;
-        margin-bottom: 40px;
-        text-align: center;
-      }
-      h3 {
-        font-size: 1.4rem;
-        margin-bottom: 20px;
-      }
-      h4 {
-        font-size: 1.1rem;
-        margin-bottom: 5px;
+      img {
+        display: block;
+        max-width: 100%;
       }
 
-      /* LAYOUT */
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* ═══════════════════════════════════════
+         TYPOGRAPHY SCALE
+      ═══════════════════════════════════════ */
+      .t-display {
+        font-family: var(--font-display);
+        font-size: clamp(2.8rem, 7vw, 4.5rem);
+        font-weight: 300;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+
+      .t-heading {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        font-weight: 300;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+      }
+
+      .t-subheading {
+        font-family: var(--font-body);
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+
+      .t-body {
+        font-size: 0.95rem;
+        color: var(--ink-2);
+        line-height: 1.7;
+      }
+
+      .t-small {
+        font-size: 0.82rem;
+        color: var(--ink-3);
+      }
+
+      /* ═══════════════════════════════════════
+         LAYOUT: VERTICAL SPINE (Signature)
+      ═══════════════════════════════════════ */
+      .page-spine {
+        position: fixed;
+        left: clamp(20px, 4vw, 56px);
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: var(--border);
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .page-spine::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1px;
+        background: var(--accent);
+        height: 0%;
+        transition: height 0.1s linear;
+      }
+
+      .spine-label {
+        position: fixed;
+        left: clamp(20px, 4vw, 56px);
+        top: 50%;
+        transform: translateY(-50%) translateX(-50%) rotate(-90deg);
+        font-family: var(--font-body);
+        font-size: 0.65rem;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-4);
+        white-space: nowrap;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      /* ═══════════════════════════════════════
+         LAYOUT: SECTIONS
+      ═══════════════════════════════════════ */
       section {
-        padding: 60px 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        padding: var(--space-xl) clamp(60px, 12vw, 180px) var(--space-xl)
+          clamp(80px, 14vw, 200px);
+        position: relative;
       }
 
+      .section-inner {
+        max-width: 740px;
+      }
+
+      .section-inner.wide {
+        max-width: 900px;
+      }
+
+      .section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: var(--space-md);
+      }
+
+      .section-label::before {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 1px;
+        background: var(--accent);
+      }
+
+      /* ═══════════════════════════════════════
+         HERO
+      ═══════════════════════════════════════ */
       .hero {
         min-height: 100vh;
-        justify-content: center;
-        text-align: center;
-      }
-      .content-wrapper {
-        max-width: 800px;
-        width: 100%;
-      }
-      .content-wrapper.wide {
-        max-width: 800px;
+        display: flex;
+        align-items: center;
+        padding-top: var(--space-xl);
+        padding-bottom: var(--space-xl);
       }
 
-      /* HERO - PROFILOVÁ FOTKA */
+      .hero-inner {
+        max-width: 740px;
+        display: grid;
+        gap: var(--space-md);
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        opacity: 0;
+        animation: fadeUp 0.8s var(--easing) 0.1s forwards;
+      }
+
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #22c55e;
+        animation: pulse 2.5s ease infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(0.85);
+        }
+      }
+
+      .hero-photo-name {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        opacity: 0;
+        animation: fadeUp 0.8s var(--easing) 0.25s forwards;
+      }
+
       .profile-photo {
-        width: 150px;
-        height: 150px;
+        width: 72px;
+        height: 72px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto 20px auto;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        display: block;
-        border: 4px solid #ffffff;
-      }
-      .hero-subtitle {
-        font-family: "Inter", sans-serif;
-        font-weight: 400;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        color: #666;
-        margin-bottom: 20px;
-      }
-      .hero-text {
-        font-size: 1rem;
-        color: #555;
-        max-width: 600px;
-        margin: 0 auto;
+        border: 2px solid var(--border);
+        flex-shrink: 0;
       }
 
-      /* KONTAKTNÍ ÚDAJE */
+      .hero-name-block h1 {
+        font-family: var(--font-display);
+        font-size: clamp(2.2rem, 5vw, 3.6rem);
+        font-weight: 300;
+        line-height: 1.05;
+        letter-spacing: -0.025em;
+        color: var(--ink);
+      }
+
+      .hero-name-block h1 em {
+        font-style: italic;
+        color: var(--accent);
+      }
+
+      .hero-role {
+        font-size: 0.8rem;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 6px;
+      }
+
+      .hero-bio {
+        opacity: 0;
+        animation: fadeUp 0.8s var(--easing) 0.4s forwards;
+        max-width: 560px;
+      }
+
+      .hero-bio p {
+        font-size: 1.05rem;
+        color: var(--ink-2);
+        line-height: 1.75;
+      }
+
+      .hero-divider {
+        width: 40px;
+        height: 1px;
+        background: var(--border);
+        opacity: 0;
+        animation: fadeUp 0.8s var(--easing) 0.55s forwards;
+      }
+
+      .hero-scroll-hint {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0;
+        animation: fadeUp 0.8s var(--easing) 0.7s forwards;
+      }
+
+      .scroll-line {
+        width: 1px;
+        height: 36px;
+        background: linear-gradient(to bottom, var(--accent), transparent);
+        animation: scrollDrop 2s ease-in-out infinite 1.5s;
+      }
+
+      @keyframes scrollDrop {
+        0% {
+          transform: scaleY(0);
+          transform-origin: top;
+          opacity: 0;
+        }
+        30% {
+          transform: scaleY(1);
+          opacity: 1;
+        }
+        70% {
+          transform: scaleY(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scaleY(0);
+          transform-origin: bottom;
+          opacity: 0;
+        }
+      }
+
+      /* ═══════════════════════════════════════
+         CONTACT / INFO SECTION
+      ═══════════════════════════════════════ */
+      .info-section {
+        background: var(--surface-2);
+      }
+
       .info-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 25px;
+        gap: var(--space-sm);
+        margin-top: var(--space-md);
       }
+
       .info-card {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(10px);
-        padding: 30px;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-        border: 1px solid #eaeaea;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: var(--space-md);
+        transition:
+          border-color 0.25s var(--easing),
+          box-shadow 0.25s var(--easing);
       }
+
+      .info-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-2);
+      }
+
+      .info-card-title {
+        font-family: var(--font-body);
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: var(--space-sm);
+        padding-bottom: var(--space-sm);
+        border-bottom: 1px solid var(--border);
+      }
+
       .info-list {
         list-style: none;
-      }
-      .info-list li {
-        margin-bottom: 20px;
         display: flex;
         flex-direction: column;
+        gap: var(--space-sm);
       }
-      .info-list li:last-child {
-        margin-bottom: 0;
+
+      .info-list li {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
       }
+
       .info-label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: #888;
-        margin-bottom: 4px;
+        font-size: 0.7rem;
         font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-4);
       }
+
       .info-value {
-        font-size: 1rem;
-        color: #222;
+        font-size: 0.95rem;
+        color: var(--ink);
         font-weight: 400;
         line-height: 1.5;
       }
 
-      /* DOVEDNOSTI A SLIDERY */
-      .skills-group {
-        margin-bottom: 40px;
+      /* ═══════════════════════════════════════
+         SKILLS SECTION
+      ═══════════════════════════════════════ */
+      .skills-section {
+        background: var(--surface);
       }
-      .skills-group h3 {
-        font-family: "Inter", sans-serif;
-        font-size: 1rem;
+
+      .skills-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-lg);
+        margin-top: var(--space-md);
+      }
+
+      .skills-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+      }
+
+      .skills-group-full {
+        margin-top: var(--space-md);
+      }
+
+      .skills-group-label {
+        font-size: 0.68rem;
+        font-weight: 500;
+        letter-spacing: 0.15em;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #888;
-        margin-bottom: 15px;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 5px;
+        color: var(--ink-3);
+        padding-bottom: var(--space-xs);
+        border-bottom: 1px solid var(--border);
       }
 
       .skill-item {
-        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
       }
+
       .skill-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 0.9rem;
-        margin-bottom: 5px;
-        font-weight: 500;
       }
 
-      /* ZAROVNÁNÍ IKONKY A TEXTU U DOVEDNOSTÍ */
       .skill-title {
         display: flex;
         align-items: center;
+        gap: 9px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--ink);
       }
+
       .skill-icon {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+        opacity: 0.85;
+      }
+
+      .skill-level {
+        font-size: 0.78rem;
+        color: var(--ink-4);
+        font-weight: 400;
+      }
+
+      .skill-track {
+        width: 100%;
+        height: 3px;
+        background: var(--border);
+        border-radius: 99px;
+        overflow: hidden;
+      }
+
+      .skill-fill {
+        height: 100%;
+        background: var(--accent);
+        width: 0;
+        border-radius: 99px;
+        transition: width 1.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+      }
+
+      /* ═══════════════════════════════════════
+         TOOLS / SOFTWARE
+      ═══════════════════════════════════════ */
+      .tools-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: var(--space-sm);
+      }
+
+      .tool-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        padding: 9px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 0.87rem;
+        color: var(--ink-2);
+        font-weight: 400;
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+          border-color 0.2s,
+          background 0.2s,
+          opacity 0.4s var(--easing),
+          transform 0.4s var(--easing);
+        cursor: default;
+      }
+
+      .tool-item:hover {
+        background: var(--surface);
+        border-color: var(--accent);
+      }
+
+      .tool-icon {
         width: 20px;
         height: 20px;
         object-fit: contain;
       }
 
-      .skill-level {
-        color: #888;
-        font-weight: 400;
-        font-size: 0.85rem;
-      }
-      .skill-track {
-        width: 100%;
-        height: 6px;
-        background: #e0e0e0;
-        border-radius: 3px;
-        overflow: hidden;
-      }
-      .skill-fill {
-        height: 100%;
-        background: #333;
-        width: 0;
-        border-radius: 3px;
+      /* ═══════════════════════════════════════
+         EXPERIENCE / TIMELINE
+      ═══════════════════════════════════════ */
+      .experience-section {
+        background: var(--surface-2);
       }
 
-      /* NÁSTROJE A PROGRAMY S IKONKAMI */
-      .tools-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-      }
-      .tool-item {
-        display: flex;
-        align-items: center;
-        background: #ffffff;
-        padding: 10px 18px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-        border: 1px solid #eaeaea;
-        font-size: 0.95rem;
-        color: #444;
-        font-weight: 500;
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      .tool-icon {
-        width: 24px;
-        height: 24px;
-        object-fit: contain;
-        margin-right: 12px;
-      }
-
-      /* PRACOVNÍ ZKUŠENOSTI A VZDĚLÁNÍ */
       .resume-section {
         display: flex;
         flex-direction: column;
-        gap: 50px;
-        width: 100%;
-      }
-      .resume-block h3 {
-        text-align: left;
-        margin-bottom: 25px;
-        color: #555;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 10px;
-        font-family: "Playfair Display", serif;
-        font-size: 1.4rem;
-        text-transform: none;
-        letter-spacing: normal;
-      }
-      .timeline-item {
-        margin-bottom: 30px;
-        padding-left: 20px;
-        border-left: 2px solid #ddd;
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      .timeline-date {
-        font-size: 0.8rem;
-        color: #888;
-        letter-spacing: 1px;
-        margin-bottom: 5px;
-        font-weight: 500;
-        text-transform: uppercase;
+        gap: var(--space-lg);
+        margin-top: var(--space-md);
       }
 
-      /* ZAROVNÁNÍ LOGA FIREM A ŠKOL */
+      .resume-block-label {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        font-weight: 300;
+        color: var(--ink);
+        margin-bottom: var(--space-md);
+        padding-bottom: var(--space-sm);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .timeline-item {
+        padding: var(--space-md) 0 var(--space-md) var(--space-md);
+        border-left: 1px solid var(--border);
+        position: relative;
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+          opacity 0.6s var(--easing),
+          transform 0.6s var(--easing);
+      }
+
+      .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -4px;
+        top: calc(var(--space-md) + 4px);
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--surface-2);
+        border: 1.5px solid var(--accent);
+        transition: background 0.2s;
+      }
+
+      .timeline-item:hover::before {
+        background: var(--accent);
+      }
+
+      .timeline-item:last-child {
+        border-left-color: transparent;
+      }
+
+      .timeline-date {
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 6px;
+      }
+
       .timeline-title {
         display: flex;
         align-items: center;
-        margin-bottom: 5px;
+        gap: 10px;
+        margin-bottom: 8px;
       }
+
       .timeline-title h4 {
-        margin-bottom: 0;
-      } /* Vyruší původní margin u h4, protože teď drží mezeru wrapper */
+        font-family: var(--font-body);
+        font-size: 0.97rem;
+        font-weight: 500;
+        color: var(--ink);
+        margin: 0;
+        line-height: 1.3;
+      }
+
       .timeline-icon {
-        width: 26px;
-        height: 26px;
+        width: 24px;
+        height: 24px;
         object-fit: contain;
-        margin-right: 12px;
-        border-radius: 4px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        padding: 2px;
+        background: var(--surface);
+        flex-shrink: 0;
       }
 
       .timeline-item p {
-        font-size: 0.9rem;
-        color: #555;
+        font-size: 0.88rem;
+        color: var(--ink-3);
+        line-height: 1.7;
       }
 
-      /* PROJEKTY */
+      /* ═══════════════════════════════════════
+         PROJECTS SECTION
+      ═══════════════════════════════════════ */
       .projects-section {
-        padding-top: 60px;
-        padding-bottom: 80px;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        background: var(--surface);
+        padding-bottom: calc(var(--space-xl) + 40px);
       }
-      .projects-wrapper {
-        display: flex;
-        gap: 25px;
-        width: 100%;
-        max-width: 900px;
-        overflow-x: auto;
-        padding: 20px 10px;
-        scroll-snap-type: x mandatory;
-        cursor: grab;
-      }
-      .projects-wrapper:active {
-        cursor: grabbing;
-      }
-      .projects-wrapper::-webkit-scrollbar {
-        display: none;
-      }
-      .projects-wrapper {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+
+      .projects-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-sm);
+        margin-top: var(--space-md);
       }
 
       .project-card {
-        flex: 0 0 380px; /* Zvětšeno z 320px na 380px (šířka karty) */
-        min-height: 400px; /* Změněno z height: 350px na min-height pro lepší přizpůsobení textu */
-        scroll-snap-align: center;
-        opacity: 0;
-        transform: translateY(20px);
-        user-select: none;
-      }
-      .project-content {
-        background: #ffffff;
-        width: 100%;
-        height: 100%;
-        border-radius: 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: var(--space-md);
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-        border: 1px solid #f0f0f0;
-        padding: 30px;
+        gap: var(--space-sm);
+        opacity: 0;
+        transform: translateY(20px);
         transition:
-          transform 0.3s ease,
-          box-shadow 0.3s ease;
+          opacity 0.5s var(--easing),
+          transform 0.5s var(--easing),
+          border-color 0.25s,
+          box-shadow 0.25s;
       }
-      .project-content:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+
+      .project-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-2);
+        transform: translateY(-3px) !important;
       }
-      .project-content p {
-        font-size: 0.9rem;
-        color: #555;
-        margin-top: 10px;
+
+      .project-index {
+        font-size: 0.68rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        color: var(--ink-4);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .project-card h4 {
+        font-family: var(--font-body);
+        font-size: 0.97rem;
+        font-weight: 500;
+        color: var(--ink);
+        line-height: 1.4;
+        flex-grow: 1;
+      }
+
+      .project-card p {
+        font-size: 0.87rem;
+        color: var(--ink-3);
+        line-height: 1.7;
+        flex-grow: 1;
       }
 
       .project-link {
-        display: inline-block;
-        margin-top: 20px;
-        padding: 8px 20px;
-        background: #333333;
-        color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--accent);
+        margin-top: auto;
+        padding-top: var(--space-sm);
+        border-top: 1px solid var(--border);
+        transition:
+          gap 0.2s var(--easing),
+          opacity 0.2s;
         text-decoration: none;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        transition: background 0.3s ease;
-      }
-      .project-link:hover {
-        background: #555555;
       }
 
-      @media (max-width: 768px) {
+      .project-link::after {
+        content: "→";
+        transition: transform 0.2s var(--easing);
+      }
+
+      .project-link:hover::after {
+        transform: translateX(3px);
+      }
+
+      /* ═══════════════════════════════════════
+         FOOTER / BOTTOM SIGNATURE
+      ═══════════════════════════════════════ */
+      .page-footer {
+        padding: var(--space-md) clamp(80px, 14vw, 200px);
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--surface);
+      }
+
+      .footer-name {
+        font-family: var(--font-display);
+        font-size: 0.9rem;
+        font-weight: 300;
+        color: var(--ink-3);
+        font-style: italic;
+      }
+
+      .footer-copy {
+        font-size: 0.78rem;
+        color: var(--ink-4);
+      }
+
+      /* ═══════════════════════════════════════
+         REVEAL ANIMATIONS (Intersection Observer)
+      ═══════════════════════════════════════ */
+      .reveal {
+        opacity: 0;
+        transform: translateY(22px);
+        transition:
+          opacity 0.65s var(--easing),
+          transform 0.65s var(--easing);
+      }
+
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .reveal-delay-1 {
+        transition-delay: 0.08s;
+      }
+      .reveal-delay-2 {
+        transition-delay: 0.16s;
+      }
+      .reveal-delay-3 {
+        transition-delay: 0.24s;
+      }
+      .reveal-delay-4 {
+        transition-delay: 0.32s;
+      }
+
+      /* ═══════════════════════════════════════
+         KEYFRAMES
+      ═══════════════════════════════════════ */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ═══════════════════════════════════════
+         REDUCED MOTION
+      ═══════════════════════════════════════ */
+      @media (prefers-reduced-motion: reduce) {
+        .hero-badge,
+        .hero-photo-name,
+        .hero-bio,
+        .hero-divider,
+        .hero-scroll-hint {
+          animation: none;
+          opacity: 1;
+        }
+        .reveal {
+          transition: none;
+          opacity: 1;
+          transform: none;
+        }
+        .timeline-item {
+          transition: none;
+          opacity: 1;
+          transform: none;
+        }
+        .tool-item {
+          transition: none;
+        }
+        .project-card {
+          transition: none;
+          opacity: 1;
+          transform: none;
+        }
+        .skill-fill {
+          transition: none;
+        }
+        .scroll-line {
+          animation: none;
+        }
+      }
+
+      /* ═══════════════════════════════════════
+         RESPONSIVE
+      ═══════════════════════════════════════ */
+      @media (max-width: 900px) {
+        section {
+          padding: var(--space-lg) clamp(40px, 8vw, 80px) var(--space-lg)
+            clamp(56px, 10vw, 100px);
+        }
+
         .info-grid {
           grid-template-columns: 1fr;
         }
-        h1 {
-          font-size: 2.5rem;
+
+        .skills-columns {
+          grid-template-columns: 1fr;
+          gap: var(--space-md);
         }
-        .project-card {
-          flex: 0 0 320px; /* Zvětšeno z 280px na 320px pro mobilní zařízení */
+
+        .projects-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .page-footer {
+          padding: var(--space-md) clamp(56px, 10vw, 100px);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .page-spine,
+        .spine-label {
+          display: none;
+        }
+
+        section {
+          padding: var(--space-lg) var(--space-md) var(--space-lg)
+            var(--space-md);
+        }
+
+        .hero {
+          padding: 80px var(--space-md) var(--space-lg);
+        }
+
+        .hero-photo-name {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-sm);
+        }
+
+        .page-footer {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-xs);
+          padding: var(--space-md);
+        }
+
+        .projects-grid {
+          grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
+    <!-- VERTICAL SPINE (Signature element) -->
+    <div class="page-spine" id="pageSpine"></div>
+    <div class="spine-label">Vít Šebestík — Portfolio</div>
+
+    <!-- ══════════════════════ HERO ══════════════════════ -->
     <section class="hero">
-      <div class="content-wrapper">
-        <img
-          src="cv-photo.jpg"
-          alt="Moje profilová fotka"
-          class="profile-photo"
-        />
-        <h1 class="hero-title">Mgr. Vít Šebestík</h1>
-        <div class="hero-subtitle">Absolvent</div>
-        <p class="hero-text">
-          Jsem absolvent počítačové lingvistiky na Masarykově univerzitě a
-          hledám práci, která mi umožní dále rozvíjet můj potenciál. K práci
-          přistupuji zodpovědně, zakládám si na otevřené komunikaci a baví mě
-          sledovat novinky i potkávat zajímavé lidi z oboru. Zastávám názor, že
-          každá role je především příležitostí k růstu a získávání cenných
-          zkušeností. Přináším chuť do práce, spolehlivost a odhodlání uplatnit
-          své dovednosti tam, kde je potřeba. Na každou kariérní výzvu se dívám
-          jako na šanci ukázat, co ve mně je.
-        </p>
+      <div class="hero-inner">
+        <div class="hero-badge">
+          <span class="status-dot"></span>
+          <span class="t-subheading">Hledám uplatnění</span>
+        </div>
+
+        <div class="hero-photo-name">
+          <img
+            src="cv-photo.jpg"
+            alt="Moje profilová fotka"
+            class="profile-photo"
+          />
+          <div class="hero-name-block">
+            <h1>Mgr. Vít <em>Šebestík</em></h1>
+            <p class="hero-role">Absolvent · Počítačová lingvistika</p>
+          </div>
+        </div>
+
+        <div class="hero-bio">
+          <p>
+            Jsem absolvent počítačové lingvistiky na Masarykově univerzitě a
+            hledám práci, která mi umožní dále rozvíjet můj potenciál. K práci
+            přistupuji zodpovědně, zakládám si na otevřené komunikaci a baví mě
+            sledovat novinky i potkávat zajímavé lidi z oboru. Zastávám názor,
+            že každá role je především příležitostí k růstu a získávání cenných
+            zkušeností. Přináším chuť do práce, spolehlivost a odhodlání
+            uplatnit své dovednosti tam, kde je potřeba. Na každou kariérní
+            výzvu se dívám jako na šanci ukázat, co ve mně je.
+          </p>
+        </div>
+
+        <div class="hero-divider"></div>
+
+        <div class="hero-scroll-hint">
+          <div class="scroll-line"></div>
+          <span class="t-small">Procházet portfolio</span>
+        </div>
       </div>
     </section>
 
+    <!-- ══════════════════════ KONTAKTNÍ ÚDAJE ══════════════════════ -->
     <section class="info-section">
-      <div class="content-wrapper">
-        <h2>Kontaktní údaje</h2>
+      <div class="section-inner">
+        <div class="section-label reveal">
+          <span class="t-subheading">Kontakt</span>
+        </div>
+        <h2 class="t-heading reveal reveal-delay-1">Kontaktní údaje</h2>
+
         <div class="info-grid">
-          <div class="info-card">
-            <h3>Kontakt</h3>
+          <div class="info-card reveal reveal-delay-2">
+            <p class="info-card-title">Kontakt</p>
             <ul class="info-list">
               <li>
-                <span class="info-label">Telefon</span
-                ><span class="info-value">+420 777 583 149</span>
+                <span class="info-label">Telefon</span>
+                <span class="info-value">+420 777 583 149</span>
               </li>
               <li>
-                <span class="info-label">E-mail</span
-                ><span class="info-value"
-                  >vit.sebestik@seznam.cz <br />vit.sebestik@gmail.com</span
+                <span class="info-label">E-mail</span>
+                <span class="info-value"
+                  >vit.sebestik@seznam.cz<br />vit.sebestik@gmail.com</span
                 >
               </li>
               <li>
-                <span class="info-label">Bydliště</span
-                ><span class="info-value"
+                <span class="info-label">Bydliště</span>
+                <span class="info-value"
                   >Alžírská 1521/4<br />708 00, Ostrava-Poruba<br />Česká
                   republika</span
                 >
               </li>
             </ul>
           </div>
-          <div class="info-card">
-            <h3>Osobní údaje</h3>
+          <div class="info-card reveal reveal-delay-3">
+            <p class="info-card-title">Osobní údaje</p>
             <ul class="info-list">
               <li>
-                <span class="info-label">Datum narození</span
-                ><span class="info-value">12. září 2001</span>
+                <span class="info-label">Datum narození</span>
+                <span class="info-value">12. září 2001</span>
               </li>
               <li>
-                <span class="info-label">Státní příslušnost</span
-                ><span class="info-value">Česká republika</span>
+                <span class="info-label">Státní příslušnost</span>
+                <span class="info-value">Česká republika</span>
               </li>
               <li>
-                <span class="info-label">Řidičský průkaz</span
-                ><span class="info-value">AM, B1, B</span>
+                <span class="info-label">Řidičský průkaz</span>
+                <span class="info-value">AM, B1, B</span>
               </li>
             </ul>
           </div>
@@ -451,120 +985,103 @@
       </div>
     </section>
 
+    <!-- ══════════════════════ DOVEDNOSTI ══════════════════════ -->
     <section class="skills-section">
-      <div class="content-wrapper">
-        <h2>Znalosti a dovednosti</h2>
+      <div class="section-inner wide">
+        <div class="section-label reveal">
+          <span class="t-subheading">Schopnosti</span>
+        </div>
+        <h2 class="t-heading reveal reveal-delay-1">Znalosti a dovednosti</h2>
 
-        <div class="skills-group">
-          <h3>Jazyky</h3>
+        <div class="skills-columns">
+          <!-- Jazyky -->
+          <div class="skills-group reveal reveal-delay-2">
+            <p class="skills-group-label">Jazyky</p>
 
-          <div class="skill-item">
-            <div class="skill-header">
-              <div class="skill-title">
-                <img
-                  src="vlajka-cz.png"
-                  alt="Čeština"
-                  class="skill-icon"
-                  style="margin-right: 10px"
-                />
-                <span>Čeština</span>
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img src="vlajka-cz.png" alt="Čeština" class="skill-icon" />
+                  <span>Čeština</span>
+                </div>
+                <span class="skill-level">C2 (Rodilý mluvčí)</span>
               </div>
-              <span class="skill-level">C2 (Rodilý mluvčí)</span>
+              <div class="skill-track">
+                <div class="skill-fill" data-width="100%"></div>
+              </div>
             </div>
-            <div class="skill-track">
-              <div class="skill-fill" data-width="100%"></div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img
+                    src="vlajka-uk.png"
+                    alt="Angličtina"
+                    class="skill-icon"
+                  />
+                  <span>Angličtina</span>
+                </div>
+                <span class="skill-level">B2 (Pokročilý)</span>
+              </div>
+              <div class="skill-track">
+                <div class="skill-fill" data-width="75%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img src="vlajka-de.png" alt="Němčina" class="skill-icon" />
+                  <span>Němčina</span>
+                </div>
+                <span class="skill-level">A1 (Začátečník)</span>
+              </div>
+              <div class="skill-track">
+                <div class="skill-fill" data-width="15%"></div>
+              </div>
             </div>
           </div>
 
-          <div class="skill-item">
-            <div class="skill-header">
-              <div class="skill-title">
-                <img
-                  src="vlajka-uk.png"
-                  alt="Angličtina"
-                  class="skill-icon"
-                  style="margin-right: 10px"
-                />
-                <span>Angličtina</span>
-              </div>
-              <span class="skill-level">B2 (Pokročilý)</span>
-            </div>
-            <div class="skill-track">
-              <div class="skill-fill" data-width="75%"></div>
-            </div>
-          </div>
+          <!-- Programování -->
+          <div class="skills-group reveal reveal-delay-3">
+            <p class="skills-group-label">Programování</p>
 
-          <div class="skill-item">
-            <div class="skill-header">
-              <div class="skill-title">
-                <img
-                  src="vlajka-de.png"
-                  alt="Němčina"
-                  class="skill-icon"
-                  style="margin-right: 10px"
-                />
-                <span>Němčina</span>
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img src="logo-html.png" alt="HTML" class="skill-icon" />
+                  <span>HTML</span>
+                  <span style="color: var(--border); margin: 0 4px">/</span>
+                  <img src="logo-css.png" alt="CSS" class="skill-icon" />
+                  <span>CSS</span>
+                </div>
+                <span class="skill-level">Mírně pokročilý</span>
               </div>
-              <span class="skill-level">A1 (Začátečník)</span>
+              <div class="skill-track">
+                <div class="skill-fill" data-width="40%"></div>
+              </div>
             </div>
-            <div class="skill-track">
-              <div class="skill-fill" data-width="15%"></div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img src="logo-python.png" alt="Python" class="skill-icon" />
+                  <span>Python</span>
+                </div>
+                <span class="skill-level">Mírně pokročilý</span>
+              </div>
+              <div class="skill-track">
+                <div class="skill-fill" data-width="40%"></div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="skills-group">
-          <h3>Programování</h3>
-
-          <div class="skill-item">
-            <div class="skill-header">
-              <div class="skill-title">
-                <img
-                  src="logo-html.png"
-                  alt="HTML"
-                  class="skill-icon"
-                  style="margin-right: 8px"
-                />
-                <span style="margin-right: 10px">HTML</span>
-
-                <span style="margin-right: 10px; color: #888">/</span>
-
-                <img
-                  src="logo-css.png"
-                  alt="CSS"
-                  class="skill-icon"
-                  style="margin-right: 8px"
-                />
-                <span>CSS</span>
-              </div>
-              <span class="skill-level">Mírně pokročilý</span>
-            </div>
-            <div class="skill-track">
-              <div class="skill-fill" data-width="40%"></div>
-            </div>
-          </div>
-
-          <div class="skill-item">
-            <div class="skill-header">
-              <div class="skill-title">
-                <img
-                  src="logo-python.png"
-                  alt="Python"
-                  class="skill-icon"
-                  style="margin-right: 10px"
-                />
-                <span>Python</span>
-              </div>
-              <span class="skill-level">Mírně pokročilý</span>
-            </div>
-            <div class="skill-track">
-              <div class="skill-fill" data-width="40%"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="skills-group">
-          <h3>Software, se kterým umím pracovat</h3>
+        <!-- Software -->
+        <div class="skills-group-full reveal reveal-delay-2">
+          <p class="skills-group-label" style="margin-top: var(--space-lg)">
+            Software, se kterým umím pracovat
+          </p>
           <div class="tools-container">
             <div class="tool-item">
               <img
@@ -574,22 +1091,18 @@
               />
               <span>Microsoft 365</span>
             </div>
-
             <div class="tool-item">
               <img src="ikonka-vscode.png" alt="VS Code" class="tool-icon" />
               <span>VS Code</span>
             </div>
-
             <div class="tool-item">
               <img src="ikonka-github.png" alt="GitHub" class="tool-icon" />
               <span>GitHub</span>
             </div>
-
             <div class="tool-item">
               <img src="ikonka-affinity.png" alt="Affinity" class="tool-icon" />
               <span>Affinity</span>
             </div>
-
             <div class="tool-item">
               <img
                 src="ikonka-vegas.png"
@@ -603,12 +1116,18 @@
       </div>
     </section>
 
+    <!-- ══════════════════════ ZKUŠENOSTI A VZDĚLÁNÍ ══════════════════════ -->
     <section class="experience-section">
-      <div class="content-wrapper wide">
-        <h2>Zkušenosti a vzdělání</h2>
+      <div class="section-inner wide">
+        <div class="section-label reveal">
+          <span class="t-subheading">Kariéra</span>
+        </div>
+        <h2 class="t-heading reveal reveal-delay-1">Zkušenosti a vzdělání</h2>
+
         <div class="resume-section">
+          <!-- Pracovní zkušenosti -->
           <div class="resume-block">
-            <h3>Pracovní zkušenosti</h3>
+            <h3 class="resume-block-label reveal">Pracovní zkušenosti</h3>
             <div class="timeline">
               <div class="timeline-item">
                 <div class="timeline-date">2024 — Současnost</div>
@@ -629,6 +1148,7 @@
                   dokladových vět.
                 </p>
               </div>
+
               <div class="timeline-item">
                 <div class="timeline-date">Srpen 2025 — Leden 2026</div>
                 <div class="timeline-title">
@@ -648,6 +1168,7 @@
                   uživatelskou přívětivost.
                 </p>
               </div>
+
               <div class="timeline-item">
                 <div class="timeline-date">2024 (3 měsíce)</div>
                 <div class="timeline-title">
@@ -665,6 +1186,7 @@
                   záznamu, a eliminoval jsem nepřesnosti způsobené softwarem.
                 </p>
               </div>
+
               <div class="timeline-item">
                 <div class="timeline-date">2022 — 2024</div>
                 <div class="timeline-title">
@@ -683,6 +1205,7 @@
                   skladových úkonech.
                 </p>
               </div>
+
               <div class="timeline-item">
                 <div class="timeline-date">2021 — 2024</div>
                 <div class="timeline-title">
@@ -691,7 +1214,7 @@
                     alt="Tempo Training"
                     class="timeline-icon"
                   />
-                  <h4>Tempo Training & Consulting a.s.</h4>
+                  <h4>Tempo Training &amp; Consulting a.s.</h4>
                 </div>
                 <p>
                   Nastoupil jsem jako administrativní podpora pro zpracování
@@ -704,8 +1227,9 @@
             </div>
           </div>
 
+          <!-- Vzdělání -->
           <div class="resume-block">
-            <h3>Vzdělání</h3>
+            <h3 class="resume-block-label reveal">Vzdělání</h3>
             <div class="timeline">
               <div class="timeline-item">
                 <div class="timeline-date">2024 — Současnost</div>
@@ -714,10 +1238,12 @@
                   <h4>Filozofická fakulta Masarykovy univerzity, Brno-střed</h4>
                 </div>
                 <p>
-                  Počítačová lingvistika - magisterský studijní program<br />Ukončení
-                  studia včetně státní zkoušky, udělen titul: Mgr., v roce 2026
+                  Počítačová lingvistika - magisterský studijní program<br />
+                  Ukončení studia včetně státní zkoušky, udělen titul: Mgr., v
+                  roce 2026
                 </p>
               </div>
+
               <div class="timeline-item">
                 <div class="timeline-date">2021 — 2024</div>
                 <div class="timeline-title">
@@ -725,10 +1251,12 @@
                   <h4>Filozofická fakulta Masarykovy univerzity, Brno-střed</h4>
                 </div>
                 <p>
-                  Počítačová lingvistika - bakalářský studijní program<br />Ukončení
-                  studia včetně státní zkoušky, udělen titul: Bc., v roce 2024
+                  Počítačová lingvistika - bakalářský studijní program<br />
+                  Ukončení studia včetně státní zkoušky, udělen titul: Bc., v
+                  roce 2024
                 </p>
               </div>
+
               <div class="timeline-item">
                 <div class="timeline-date">2013 — 2021</div>
                 <div class="timeline-title">
@@ -747,11 +1275,17 @@
       </div>
     </section>
 
+    <!-- ══════════════════════ PROJEKTY ══════════════════════ -->
     <section class="projects-section">
-      <h2>Portfolio projektů</h2>
-      <div class="projects-wrapper">
-        <div class="project-card">
-          <div class="project-content">
+      <div class="section-inner wide">
+        <div class="section-label reveal">
+          <span class="t-subheading">Práce</span>
+        </div>
+        <h2 class="t-heading reveal reveal-delay-1">Portfolio projektů</h2>
+
+        <div class="projects-grid">
+          <div class="project-card">
+            <span class="project-index">01</span>
             <h4>Analýza sentimentu titulků</h4>
             <p>
               Bakalářská práce zaměřená na NLP. Vytvořil jsem skript pro
@@ -766,9 +1300,9 @@
               >Zobrazit práci</a
             >
           </div>
-        </div>
-        <div class="project-card">
-          <div class="project-content">
+
+          <div class="project-card">
+            <span class="project-index">02</span>
             <h4>
               Automatická detekce lexikálních jednotek v neanotované spontánní
               řeči
@@ -786,9 +1320,9 @@
               >Zobrazit práci</a
             >
           </div>
-        </div>
-        <div class="project-card">
-          <div class="project-content">
+
+          <div class="project-card">
+            <span class="project-index">03</span>
             <h4>OmniDesk</h4>
             <p>
               Vyvíjím moderní desktopovou aplikaci OmniDesk v Pythonu, která
@@ -809,9 +1343,9 @@
               >Zobrazit projekt na GitHubu</a
             >
           </div>
-        </div>
-        <div class="project-card">
-          <div class="project-content">
+
+          <div class="project-card">
+            <span class="project-index">04</span>
             <h4>Web design: MP celní služby</h4>
             <p>
               Kompletní redesign a úprava webové prezentace pro společnost MP
@@ -830,100 +1364,138 @@
       </div>
     </section>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <span class="footer-name">Mgr. Vít Šebestík</span>
+      <span class="footer-copy">© 2025 · Všechna práva vyhrazena</span>
+    </footer>
 
+    <!-- ══════════════════════ JAVASCRIPT ══════════════════════ -->
     <script>
-      gsap.registerPlugin(ScrollTrigger);
+      /* ─── 1. Spine progress line ─── */
+      const spine = document.getElementById("pageSpine");
+      function updateSpine() {
+        const scrolled = window.scrollY;
+        const total =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const pct = total > 0 ? (scrolled / total) * 100 : 0;
+        spine.style.setProperty("--progress", pct + "%");
+      }
+      // Inject dynamic style for spine progress
+      const spineStyle = document.createElement("style");
+      spineStyle.textContent = `
+        #pageSpine::after { height: var(--progress, 0%); }
+      `;
+      document.head.appendChild(spineStyle);
+      window.addEventListener("scroll", updateSpine, { passive: true });
 
-      // 1. Hero sekce
-      gsap.from(".hero-title, .hero-subtitle, .hero-text, .profile-photo", {
-        y: 30,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.15,
-        ease: "power2.out",
+      /* ─── 2. Intersection Observer for .reveal & .timeline-item & .project-card ─── */
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      );
+
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => revealObserver.observe(el));
+
+      /* ─── 3. Timeline items staggered reveal ─── */
+      const timelineObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // stagger siblings
+              const siblings = entry.target
+                .closest(".timeline")
+                .querySelectorAll(".timeline-item");
+              siblings.forEach((item, i) => {
+                setTimeout(() => {
+                  item.style.opacity = "1";
+                  item.style.transform = "translateY(0)";
+                }, i * 120);
+              });
+              timelineObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.05 },
+      );
+
+      document.querySelectorAll(".timeline").forEach((tl) => {
+        const firstItem = tl.querySelector(".timeline-item");
+        if (firstItem) timelineObserver.observe(firstItem);
       });
 
-      // 2. Info karty
-      gsap.from(".info-card", {
-        scrollTrigger: { trigger: ".info-section", start: "top 85%" },
-        y: 20,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-      });
+      /* ─── 4. Skill fill bars ─── */
+      const skillObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.querySelectorAll(".skill-fill").forEach((fill) => {
+                fill.style.width = fill.getAttribute("data-width");
+              });
+              skillObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.2 },
+      );
 
-      // 3. ANIMACE SLIDERŮ (Jazyky a Technologie)
-      let skillFills = document.querySelectorAll(".skill-fill");
-      skillFills.forEach((fill) => {
-        gsap.to(fill, {
-          scrollTrigger: { trigger: ".skills-section", start: "top 80%" },
-          width: fill.getAttribute("data-width"),
-          duration: 1.5,
-          ease: "power3.out",
-        });
-      });
+      document
+        .querySelectorAll(".skills-section")
+        .forEach((s) => skillObserver.observe(s));
 
-      // 3.5 ANIMACE KARTIČEK S NÁSTROJI
-      gsap.to(".tool-item", {
-        scrollTrigger: { trigger: ".skills-section", start: "top 70%" },
-        y: 0,
-        opacity: 1,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power2.out",
-      });
+      /* ─── 5. Tool items staggered appear ─── */
+      const toolObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.querySelectorAll(".tool-item").forEach((item, i) => {
+                setTimeout(() => {
+                  item.style.opacity = "1";
+                  item.style.transform = "translateY(0)";
+                }, i * 80);
+              });
+              toolObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.2 },
+      );
 
-      // 4. Časová osa (Práce a Vzdělání)
-      gsap.to(".timeline-item", {
-        scrollTrigger: { trigger: ".experience-section", start: "top 85%" },
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.15,
-      });
+      document
+        .querySelectorAll(".tools-container")
+        .forEach((tc) => toolObserver.observe(tc));
 
-      // 5. Animace zjevení projektů
-      gsap.to(".project-card", {
-        scrollTrigger: { trigger: ".projects-section", start: "top 80%" },
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power2.out",
-      });
+      /* ─── 6. Project cards staggered appear ─── */
+      const projectObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const cards = entry.target.querySelectorAll(".project-card");
+              cards.forEach((card, i) => {
+                setTimeout(() => {
+                  card.style.opacity = "1";
+                  card.style.transform = "translateY(0)";
+                }, i * 100);
+              });
+              projectObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.05 },
+      );
 
-      // 6. FUNKCE: TÁHNI A PUSŤ PRO PROJEKTY
-      const slider = document.querySelector(".projects-wrapper");
-      let isDown = false;
-      let startX;
-      let scrollLeft;
-
-      slider.addEventListener("mousedown", (e) => {
-        isDown = true;
-        slider.style.scrollSnapType = "none";
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-      });
-
-      slider.addEventListener("mouseleave", () => {
-        isDown = false;
-        slider.style.scrollSnapType = "x mandatory";
-      });
-
-      slider.addEventListener("mouseup", () => {
-        isDown = false;
-        slider.style.scrollSnapType = "x mandatory";
-      });
-
-      slider.addEventListener("mousemove", (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - slider.offsetLeft;
-        const walk = (x - startX) * 2;
-        slider.scrollLeft = scrollLeft - walk;
-      });
+      document
+        .querySelectorAll(".projects-grid")
+        .forEach((pg) => projectObserver.observe(pg));
     </script>
   </body>
 </html>

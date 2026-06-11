@@ -24,8 +24,8 @@
         --surface: #ffffff;
         --surface-2: #f7f8fa;
         --border: #e8eaed;
-        --accent: #5b5efa;
-        --accent-2: rgba(91, 94, 250, 0.08);
+        --accent: #e8712a;
+        --accent-2: rgba(232, 113, 42, 0.08);
 
         --font-display: "Fraunces", Georgia, serif;
         --font-body: "DM Sans", system-ui, sans-serif;
@@ -120,61 +120,38 @@
       }
 
       /* ═══════════════════════════════════════
-         LAYOUT: VERTICAL SPINE (Signature)
+         LAYOUT: TOP PROGRESS BAR (replaces spine)
       ═══════════════════════════════════════ */
-      .page-spine {
+      .progress-bar {
         position: fixed;
-        left: clamp(20px, 4vw, 56px);
-        top: 0;
-        bottom: 0;
-        width: 1px;
-        background: var(--border);
-        z-index: 10;
-        pointer-events: none;
-      }
-
-      .page-spine::after {
-        content: "";
-        position: absolute;
         top: 0;
         left: 0;
-        width: 1px;
+        width: 0%;
+        height: 2px;
         background: var(--accent);
-        height: 0%;
-        transition: height 0.1s linear;
-      }
-
-      .spine-label {
-        position: fixed;
-        left: clamp(20px, 4vw, 56px);
-        top: 50%;
-        transform: translateY(-50%) translateX(-50%) rotate(-90deg);
-        font-family: var(--font-body);
-        font-size: 0.65rem;
-        font-weight: 500;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--ink-4);
-        white-space: nowrap;
-        z-index: 10;
-        pointer-events: none;
+        z-index: 100;
+        transition: width 0.1s linear;
       }
 
       /* ═══════════════════════════════════════
-         LAYOUT: SECTIONS
+         LAYOUT: SECTIONS (centered)
       ═══════════════════════════════════════ */
       section {
-        padding: var(--space-xl) clamp(60px, 12vw, 180px) var(--space-xl)
-          clamp(80px, 14vw, 200px);
+        padding: var(--space-xl) clamp(24px, 6vw, 80px);
         position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
       .section-inner {
         max-width: 740px;
+        width: 100%;
       }
 
       .section-inner.wide {
         max-width: 900px;
+        width: 100%;
       }
 
       .section-label {
@@ -193,20 +170,25 @@
       }
 
       /* ═══════════════════════════════════════
-         HERO
+         HERO (centered)
       ═══════════════════════════════════════ */
       .hero {
         min-height: 100vh;
         display: flex;
         align-items: center;
+        justify-content: center;
         padding-top: var(--space-xl);
         padding-bottom: var(--space-xl);
+        text-align: center;
       }
 
       .hero-inner {
-        max-width: 740px;
+        max-width: 680px;
+        width: 100%;
         display: grid;
         gap: var(--space-md);
+        align-items: center;
+        justify-items: center;
       }
 
       .hero-badge {
@@ -239,15 +221,16 @@
 
       .hero-photo-name {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: var(--space-md);
+        gap: var(--space-sm);
         opacity: 0;
         animation: fadeUp 0.8s var(--easing) 0.25s forwards;
       }
 
       .profile-photo {
-        width: 72px;
-        height: 72px;
+        width: 88px;
+        height: 88px;
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid var(--border);
@@ -256,7 +239,7 @@
 
       .hero-name-block h1 {
         font-family: var(--font-display);
-        font-size: clamp(2.2rem, 5vw, 3.6rem);
+        font-size: clamp(2.4rem, 5.5vw, 4rem);
         font-weight: 300;
         line-height: 1.05;
         letter-spacing: -0.025em;
@@ -299,6 +282,7 @@
 
       .hero-scroll-hint {
         display: flex;
+        flex-direction: column;
         align-items: center;
         gap: 10px;
         opacity: 0;
@@ -723,7 +707,7 @@
          FOOTER / BOTTOM SIGNATURE
       ═══════════════════════════════════════ */
       .page-footer {
-        padding: var(--space-md) clamp(80px, 14vw, 200px);
+        padding: var(--space-md) clamp(24px, 6vw, 80px);
         border-top: 1px solid var(--border);
         display: flex;
         align-items: center;
@@ -830,8 +814,7 @@
       ═══════════════════════════════════════ */
       @media (max-width: 900px) {
         section {
-          padding: var(--space-lg) clamp(40px, 8vw, 80px) var(--space-lg)
-            clamp(56px, 10vw, 100px);
+          padding: var(--space-lg) clamp(20px, 5vw, 48px);
         }
 
         .info-grid {
@@ -848,36 +831,24 @@
         }
 
         .page-footer {
-          padding: var(--space-md) clamp(56px, 10vw, 100px);
+          padding: var(--space-md) clamp(20px, 5vw, 48px);
         }
       }
 
       @media (max-width: 600px) {
-        .page-spine,
-        .spine-label {
-          display: none;
-        }
-
         section {
-          padding: var(--space-lg) var(--space-md) var(--space-lg)
-            var(--space-md);
+          padding: var(--space-lg) var(--space-sm);
         }
 
         .hero {
-          padding: 80px var(--space-md) var(--space-lg);
-        }
-
-        .hero-photo-name {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: var(--space-sm);
+          padding: 80px var(--space-sm) var(--space-lg);
         }
 
         .page-footer {
           flex-direction: column;
           align-items: flex-start;
           gap: var(--space-xs);
-          padding: var(--space-md);
+          padding: var(--space-md) var(--space-sm);
         }
 
         .projects-grid {
@@ -887,9 +858,8 @@
     </style>
   </head>
   <body>
-    <!-- VERTICAL SPINE (Signature element) -->
-    <div class="page-spine" id="pageSpine"></div>
-    <div class="spine-label">Vít Šebestík — Portfolio</div>
+    <!-- TOP PROGRESS BAR -->
+    <div class="progress-bar" id="progressBar"></div>
 
     <!-- ══════════════════════ HERO ══════════════════════ -->
     <section class="hero">

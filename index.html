@@ -408,6 +408,7 @@
 
       .skills-group-full {
         margin-top: var(--space-md);
+        grid-column: 1 / -1; /* Zajišťuje, že se blok Software roztáhne přes celou šířku */
       }
 
       .skills-group-label {
@@ -858,10 +859,8 @@
     </style>
   </head>
   <body>
-    <!-- TOP PROGRESS BAR -->
     <div class="progress-bar" id="progressBar"></div>
 
-    <!-- ══════════════════════ HERO ══════════════════════ -->
     <section class="hero">
       <div class="hero-inner">
         <div class="hero-badge">
@@ -903,7 +902,6 @@
       </div>
     </section>
 
-    <!-- ══════════════════════ KONTAKTNÍ ÚDAJE ══════════════════════ -->
     <section class="info-section">
       <div class="section-inner">
         <div class="section-label reveal">
@@ -955,7 +953,6 @@
       </div>
     </section>
 
-    <!-- ══════════════════════ DOVEDNOSTI ══════════════════════ -->
     <section class="skills-section">
       <div class="section-inner wide">
         <div class="section-label reveal">
@@ -963,11 +960,19 @@
         </div>
         <h2 class="t-heading reveal reveal-delay-1">Znalosti a dovednosti</h2>
 
-        <div class="skills-columns">
-          <!-- Jazyky -->
-          <div class="skills-group reveal reveal-delay-2">
-            <p class="skills-group-label">Jazyky</p>
-
+        <div
+          class="skills-group-full reveal reveal-delay-2"
+          style="margin-bottom: var(--space-xl)"
+        >
+          <p class="skills-group-label">Jazyky</p>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+              gap: var(--space-lg);
+              margin-top: var(--space-md);
+            "
+          >
             <div class="skill-item">
               <div class="skill-header">
                 <div class="skill-title">
@@ -1011,10 +1016,11 @@
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Programování -->
+        <div class="skills-columns" style="margin-top: 0">
           <div class="skills-group reveal reveal-delay-3">
-            <p class="skills-group-label">Programování</p>
+            <p class="skills-group-label">Front-end</p>
 
             <div class="skill-item">
               <div class="skill-header">
@@ -1028,9 +1034,60 @@
                 <span class="skill-level">Mírně pokročilý</span>
               </div>
               <div class="skill-track">
+                <div class="skill-fill" data-width="60%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img
+                    src="logo-javascript.png"
+                    alt="JavaScript"
+                    class="skill-icon"
+                  />
+                  <span>JavaScript</span>
+                </div>
+                <span class="skill-level">Základy</span>
+              </div>
+              <div class="skill-track">
                 <div class="skill-fill" data-width="40%"></div>
               </div>
             </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img
+                    src="logo-typescript.png"
+                    alt="TypeScript"
+                    class="skill-icon"
+                  />
+                  <span>TypeScript</span>
+                </div>
+                <span class="skill-level">Základy</span>
+              </div>
+              <div class="skill-track">
+                <div class="skill-fill" data-width="35%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img src="logo-react.png" alt="React" class="skill-icon" />
+                  <span>React</span>
+                </div>
+                <span class="skill-level">Základy</span>
+              </div>
+              <div class="skill-track">
+                <div class="skill-fill" data-width="30%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skills-group reveal reveal-delay-4">
+            <p class="skills-group-label">Back-end</p>
 
             <div class="skill-item">
               <div class="skill-header">
@@ -1041,17 +1098,43 @@
                 <span class="skill-level">Mírně pokročilý</span>
               </div>
               <div class="skill-track">
-                <div class="skill-fill" data-width="40%"></div>
+                <div class="skill-fill" data-width="50%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img src="logo-nodejs.png" alt="Node.js" class="skill-icon" />
+                  <span>Node.js</span>
+                </div>
+                <span class="skill-level">Základy</span>
+              </div>
+              <div class="skill-track">
+                <div class="skill-fill" data-width="25%"></div>
+              </div>
+            </div>
+
+            <div class="skill-item">
+              <div class="skill-header">
+                <div class="skill-title">
+                  <img src="logo-sql.png" alt="SQL" class="skill-icon" />
+                  <span>SQL</span>
+                </div>
+                <span class="skill-level">Základy</span>
+              </div>
+              <div class="skill-track">
+                <div class="skill-fill" data-width="30%"></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Software -->
-        <div class="skills-group-full reveal reveal-delay-2">
-          <p class="skills-group-label" style="margin-top: var(--space-lg)">
-            Software, se kterým umím pracovat
-          </p>
+        <div
+          class="skills-group-full reveal reveal-delay-2"
+          style="margin-top: var(--space-lg)"
+        >
+          <p class="skills-group-label">Software, se kterým umím pracovat</p>
           <div class="tools-container">
             <div class="tool-item">
               <img
@@ -1086,7 +1169,6 @@
       </div>
     </section>
 
-    <!-- ══════════════════════ ZKUŠENOSTI A VZDĚLÁNÍ ══════════════════════ -->
     <section class="experience-section">
       <div class="section-inner wide">
         <div class="section-label reveal">
@@ -1095,12 +1177,11 @@
         <h2 class="t-heading reveal reveal-delay-1">Zkušenosti a vzdělání</h2>
 
         <div class="resume-section">
-          <!-- Pracovní zkušenosti -->
           <div class="resume-block">
             <h3 class="resume-block-label reveal">Pracovní zkušenosti</h3>
             <div class="timeline">
               <div class="timeline-item">
-                <div class="timeline-date">2024 — Současnost</div>
+                <div class="timeline-date">2024 — 2026</div>
                 <div class="timeline-title">
                   <img
                     src="logo-lexonomy.png"
@@ -1120,7 +1201,7 @@
               </div>
 
               <div class="timeline-item">
-                <div class="timeline-date">Srpen 2025 — Leden 2026</div>
+                <div class="timeline-date">2025 — 2026 (cca 6 měsíců)</div>
                 <div class="timeline-title">
                   <img
                     src="logo-phalanx.png"
@@ -1140,7 +1221,7 @@
               </div>
 
               <div class="timeline-item">
-                <div class="timeline-date">2024 (3 měsíce)</div>
+                <div class="timeline-date">2024 (cca 3 měsíce)</div>
                 <div class="timeline-title">
                   <img
                     src="logo-pracuj.png"
@@ -1197,12 +1278,11 @@
             </div>
           </div>
 
-          <!-- Vzdělání -->
           <div class="resume-block">
             <h3 class="resume-block-label reveal">Vzdělání</h3>
             <div class="timeline">
               <div class="timeline-item">
-                <div class="timeline-date">2024 — Současnost</div>
+                <div class="timeline-date">2024 — 2026</div>
                 <div class="timeline-title">
                   <img src="logo-muni.png" alt="MUNI" class="timeline-icon" />
                   <h4>Filozofická fakulta Masarykovy univerzity, Brno-střed</h4>
@@ -1245,7 +1325,6 @@
       </div>
     </section>
 
-    <!-- ══════════════════════ PROJEKTY ══════════════════════ -->
     <section class="projects-section">
       <div class="section-inner wide">
         <div class="section-label reveal">
@@ -1330,34 +1409,144 @@
               >Zobrazit web</a
             >
           </div>
+
+          <div class="project-card">
+            <span class="project-index">05</span>
+            <h4>RustTools</h4>
+            <p>
+              Na tomto projektu v současnosti aktivně spolupracuji se svým
+              kamarádem. Jedná se o rychlou webovou aplikaci pro hráče survival
+              hry Rust. Obsahuje sadu specializovaných kalkulaček:
+              <strong>Raid Calculator</strong> pro optimalizaci nákladů na
+              výbušniny, <strong>Recycling Calculator</strong> pro přesný
+              výpočet získaných surovin a
+              <strong>Cupboard Calculator</strong> pro správu údržby základny.
+              Aplikace je postavena na moderním stacku: React, TypeScript, Vite,
+              TanStack Router a Tailwind CSS, přičemž veškerá herní data a
+              logika jsou striktně odděleny pro snadnou aktualizaci.
+            </p>
+            <div
+              style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap"
+            >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  background: var(--surface-2);
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  color: var(--ink-3);
+                  border: 1px solid var(--border);
+                "
+                >React</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  background: var(--surface-2);
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  color: var(--ink-3);
+                  border: 1px solid var(--border);
+                "
+                >TypeScript</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  background: var(--surface-2);
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  color: var(--ink-3);
+                  border: 1px solid var(--border);
+                "
+                >Tailwind CSS</span
+              >
+            </div>
+            <a
+              href="https://github.com/Vissse/RustTools"
+              target="_blank"
+              class="project-link"
+              >Zobrazit projekt na GitHubu</a
+            >
+          </div>
+
+          <div class="project-card">
+            <span class="project-index">06</span>
+            <h4>Interaktivní seznam přání</h4>
+            <p>
+              Vlastní dynamická webová aplikace pro správu a sdílení osobních
+              tipů na dárky. Návštěvníci mohou položky procházet, filtrovat,
+              ukládat do oblíbených a především anonymně rezervovat, čímž se
+              předchází duplicitám. Součástí je i zabezpečené administrátorské
+              rozhraní pro přidávání položek, nahrávání obrázků a úpravu pořadí
+              (drag-and-drop). Frontend je napsaný v čistém JavaScriptu (Vanilla
+              JS) bez použití těžkých frameworků, backendovou logiku a databázi
+              kompletně obstarává BaaS platforma Supabase.
+            </p>
+            <div
+              style="
+                display: flex;
+                gap: 8px;
+                margin-top: auto;
+                padding-top: 12px;
+                flex-wrap: wrap;
+              "
+            >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  background: var(--surface-2);
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  color: var(--ink-3);
+                  border: 1px solid var(--border);
+                "
+                >Vanilla JS</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  background: var(--surface-2);
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  color: var(--ink-3);
+                  border: 1px solid var(--border);
+                "
+                >Supabase (BaaS)</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  background: var(--surface-2);
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  color: var(--ink-3);
+                  border: 1px solid var(--border);
+                "
+                >HTML5 & CSS3</span
+              >
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- FOOTER -->
     <footer class="page-footer">
       <span class="footer-name">Mgr. Vít Šebestík</span>
-      <span class="footer-copy">© 2025 · Všechna práva vyhrazena</span>
+      <span class="footer-copy">© 2026 · Všechna práva vyhrazena</span>
     </footer>
 
-    <!-- ══════════════════════ JAVASCRIPT ══════════════════════ -->
     <script>
       /* ─── 1. Spine progress line ─── */
-      const spine = document.getElementById("pageSpine");
-      function updateSpine() {
+      const progressBar = document.getElementById("progressBar");
+      function updateProgress() {
         const scrolled = window.scrollY;
         const total =
           document.documentElement.scrollHeight - window.innerHeight;
         const pct = total > 0 ? (scrolled / total) * 100 : 0;
-        spine.style.setProperty("--progress", pct + "%");
+        progressBar.style.width = pct + "%";
       }
-      // Inject dynamic style for spine progress
-      const spineStyle = document.createElement("style");
-      spineStyle.textContent = `
-        #pageSpine::after { height: var(--progress, 0%); }
-      `;
-      document.head.appendChild(spineStyle);
-      window.addEventListener("scroll", updateSpine, { passive: true });
+      window.addEventListener("scroll", updateProgress, { passive: true });
 
       /* ─── 2. Intersection Observer for .reveal & .timeline-item & .project-card ─── */
       const revealObserver = new IntersectionObserver(

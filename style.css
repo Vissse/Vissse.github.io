@@ -39,7 +39,6 @@ body {
     font-family: var(--font-sans);
     line-height: 1.6;
     overflow-x: hidden;
-    position: relative;
 }
 
 /* Background Animated Blob */
@@ -48,13 +47,14 @@ body {
     top: 50%;
     left: 50%;
     translate: -50% -50%;
-    width: 600px;
-    height: 600px;
-    background: linear-gradient(to right, aquamarine, mediumpurple);
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(to right, var(--accent), mediumpurple);
     border-radius: 50%;
     filter: blur(80px);
-    opacity: 0.15;
-    z-index: -2;
+    opacity: 0.3;
+    z-index: 0;
+    pointer-events: none;
     animation: rotate 20s infinite linear;
 }
 
@@ -62,9 +62,15 @@ body {
     position: fixed;
     height: 100vh;
     width: 100vw;
-    z-index: -1;
-    backdrop-filter: blur(100px);
-    -webkit-backdrop-filter: blur(100px);
+    z-index: 1;
+    pointer-events: none;
+    backdrop-filter: blur(80px);
+    -webkit-backdrop-filter: blur(80px);
+}
+
+main, footer {
+    position: relative;
+    z-index: 2;
 }
 
 @keyframes rotate {
@@ -634,6 +640,10 @@ a.contact-item:hover {
         left: 50%;
         transform: translateX(-50%);
         bottom: -20px;
+    }
+    
+    .scroll-indicator {
+        display: none;
     }
     
     .nav-links {

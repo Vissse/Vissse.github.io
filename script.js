@@ -31,14 +31,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nav) nav.style.opacity = '1';
     }, 100);
 
-    // 2. Navbar Scroll Effect
+    // 2. Navbar Scroll Effect (Optimized with requestAnimationFrame)
     const navbar = document.querySelector('.navbar');
+    let ticking = false;
     
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+                ticking = false;
+            });
+            ticking = true;
         }
     });
 

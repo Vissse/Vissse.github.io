@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (blob) {
         window.addEventListener('mousemove', (e) => {
+            if (window.innerWidth <= 992) return; // Disable movement on mobile
+
             const { clientX, clientY } = e;
             
             blob.animate({

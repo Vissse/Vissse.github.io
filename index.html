@@ -1,1666 +1,221 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="cs">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portfolio Vít Šebestík</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap"
-      rel="stylesheet"
-    />
-
-    <style>
-      /* ═══════════════════════════════════════
-         DESIGN TOKENS
-      ═══════════════════════════════════════ */
-      :root {
-        --ink: #111318;
-        --ink-2: #3d4047;
-        --ink-3: #6b7280;
-        --ink-4: #9ca3af;
-        --surface: #ffffff;
-        --surface-2: #f7f8fa;
-        --border: #e8eaed;
-        --accent: #e8712a;
-        --accent-2: rgba(232, 113, 42, 0.08);
-
-        --font-display: "Fraunces", Georgia, serif;
-        --font-body: "DM Sans", system-ui, sans-serif;
-
-        --space-xs: 8px;
-        --space-sm: 16px;
-        --space-md: 32px;
-        --space-lg: 64px;
-        --space-xl: 120px;
-
-        --radius-sm: 8px;
-        --radius-md: 16px;
-        --radius-lg: 24px;
-
-        --easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      }
-
-      /* ═══════════════════════════════════════
-         RESET & BASE
-      ═══════════════════════════════════════ */
-      *,
-      *::before,
-      *::after {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        background: var(--surface);
-        color: var(--ink);
-        font-family: var(--font-body);
-        font-weight: 300;
-        line-height: 1.65;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-      }
-
-      img {
-        display: block;
-        max-width: 100%;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      /* ═══════════════════════════════════════
-         TYPOGRAPHY SCALE
-      ═══════════════════════════════════════ */
-      .t-display {
-        font-family: var(--font-display);
-        font-size: clamp(2.8rem, 7vw, 4.5rem);
-        font-weight: 300;
-        line-height: 1.1;
-        letter-spacing: -0.02em;
-        color: var(--ink);
-      }
-
-      .t-heading {
-        font-family: var(--font-display);
-        font-size: clamp(1.6rem, 3vw, 2.2rem);
-        font-weight: 300;
-        line-height: 1.2;
-        letter-spacing: -0.01em;
-        color: var(--ink);
-      }
-
-      .t-subheading {
-        font-family: var(--font-body);
-        font-size: 0.7rem;
-        font-weight: 500;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--ink-3);
-      }
-
-      .t-body {
-        font-size: 0.95rem;
-        color: var(--ink-2);
-        line-height: 1.7;
-      }
-
-      .t-small {
-        font-size: 0.82rem;
-        color: var(--ink-3);
-      }
-
-      /* ═══════════════════════════════════════
-         LAYOUT: TOP PROGRESS BAR (replaces spine)
-      ═══════════════════════════════════════ */
-      .progress-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 0%;
-        height: 2px;
-        background: var(--accent);
-        z-index: 100;
-        transition: width 0.1s linear;
-      }
-
-      /* ═══════════════════════════════════════
-         LAYOUT: SECTIONS (centered)
-      ═══════════════════════════════════════ */
-      section {
-        padding: var(--space-xl) clamp(24px, 6vw, 80px);
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .section-inner {
-        max-width: 740px;
-        width: 100%;
-      }
-
-      .section-inner.wide {
-        max-width: 900px;
-        width: 100%;
-      }
-
-      .section-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: var(--space-md);
-      }
-
-      .section-label::before {
-        content: "";
-        display: block;
-        width: 20px;
-        height: 1px;
-        background: var(--accent);
-      }
-
-      /* ═══════════════════════════════════════
-         HERO (centered)
-      ═══════════════════════════════════════ */
-      .hero {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-top: var(--space-xl);
-        padding-bottom: var(--space-xl);
-        text-align: center;
-      }
-
-      .hero-inner {
-        max-width: 680px;
-        width: 100%;
-        display: grid;
-        gap: var(--space-md);
-        align-items: center;
-        justify-items: center;
-      }
-
-      .hero-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-xs);
-        opacity: 0;
-        animation: fadeUp 0.8s var(--easing) 0.1s forwards;
-      }
-
-      .status-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #22c55e;
-        animation: pulse 2.5s ease infinite;
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.6;
-          transform: scale(0.85);
-        }
-      }
-
-      .hero-photo-name {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-sm);
-        opacity: 0;
-        animation: fadeUp 0.8s var(--easing) 0.25s forwards;
-      }
-
-      .profile-photo {
-        width: 88px;
-        height: 88px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid var(--border);
-        flex-shrink: 0;
-      }
-
-      .hero-name-block h1 {
-        font-family: var(--font-display);
-        font-size: clamp(2.4rem, 5.5vw, 4rem);
-        font-weight: 300;
-        line-height: 1.05;
-        letter-spacing: -0.025em;
-        color: var(--ink);
-      }
-
-      .hero-name-block h1 em {
-        font-style: italic;
-        color: var(--accent);
-      }
-
-      .hero-role {
-        font-size: 0.8rem;
-        font-weight: 500;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--ink-3);
-        margin-top: 6px;
-      }
-
-      .hero-bio {
-        opacity: 0;
-        animation: fadeUp 0.8s var(--easing) 0.4s forwards;
-        max-width: 560px;
-      }
-
-      .hero-bio p {
-        font-size: 1.05rem;
-        color: var(--ink-2);
-        line-height: 1.75;
-      }
-
-      .hero-divider {
-        width: 40px;
-        height: 1px;
-        background: var(--border);
-        opacity: 0;
-        animation: fadeUp 0.8s var(--easing) 0.55s forwards;
-      }
-
-      .hero-scroll-hint {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        opacity: 0;
-        animation: fadeUp 0.8s var(--easing) 0.7s forwards;
-      }
-
-      .scroll-line {
-        width: 1px;
-        height: 36px;
-        background: linear-gradient(to bottom, var(--accent), transparent);
-        animation: scrollDrop 2s ease-in-out infinite 1.5s;
-      }
-
-      @keyframes scrollDrop {
-        0% {
-          transform: scaleY(0);
-          transform-origin: top;
-          opacity: 0;
-        }
-        30% {
-          transform: scaleY(1);
-          opacity: 1;
-        }
-        70% {
-          transform: scaleY(1);
-          opacity: 1;
-        }
-        100% {
-          transform: scaleY(0);
-          transform-origin: bottom;
-          opacity: 0;
-        }
-      }
-
-      /* ═══════════════════════════════════════
-         CONTACT / INFO SECTION
-      ═══════════════════════════════════════ */
-      .info-section {
-        background: var(--surface-2);
-      }
-
-      .info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-sm);
-        margin-top: var(--space-md);
-      }
-
-      .info-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        padding: var(--space-md);
-        transition:
-          border-color 0.25s var(--easing),
-          box-shadow 0.25s var(--easing);
-      }
-
-      .info-card:hover {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-2);
-      }
-
-      .info-card-title {
-        font-family: var(--font-body);
-        font-size: 0.7rem;
-        font-weight: 500;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--ink-3);
-        margin-bottom: var(--space-sm);
-        padding-bottom: var(--space-sm);
-        border-bottom: 1px solid var(--border);
-      }
-
-      .info-list {
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm);
-      }
-
-      .info-list li {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-      }
-
-      .info-label {
-        font-size: 0.7rem;
-        font-weight: 500;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--ink-4);
-      }
-
-      .info-value {
-        font-size: 0.95rem;
-        color: var(--ink);
-        font-weight: 400;
-        line-height: 1.5;
-      }
-
-      /* ═══════════════════════════════════════
-         SKILLS SECTION
-      ═══════════════════════════════════════ */
-      .skills-section {
-        background: var(--surface);
-      }
-
-      .skills-columns {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-lg);
-        margin-top: var(--space-md);
-      }
-
-      .skills-group {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-md);
-      }
-
-      .skills-group-full {
-        margin-top: var(--space-md);
-        grid-column: 1 / -1; /* Zajišťuje, že se blok Software roztáhne přes celou šířku */
-      }
-
-      .skills-group-label {
-        font-size: 0.68rem;
-        font-weight: 500;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--ink-3);
-        padding-bottom: var(--space-xs);
-        border-bottom: 1px solid var(--border);
-      }
-
-      .skill-item {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .skill-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .skill-title {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: var(--ink);
-      }
-
-      .skill-icon {
-        width: 18px;
-        height: 18px;
-        object-fit: contain;
-        opacity: 0.85;
-      }
-
-      .skill-level {
-        font-size: 0.78rem;
-        color: var(--ink-4);
-        font-weight: 400;
-      }
-
-      .skill-track {
-        width: 100%;
-        height: 3px;
-        background: var(--border);
-        border-radius: 99px;
-        overflow: hidden;
-      }
-
-      .skill-fill {
-        height: 100%;
-        background: var(--accent);
-        width: 0;
-        border-radius: 99px;
-        transition: width 1.4s cubic-bezier(0.34, 1.2, 0.64, 1);
-      }
-
-      /* ═══════════════════════════════════════
-         TOOLS / SOFTWARE
-      ═══════════════════════════════════════ */
-      .tools-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: var(--space-sm);
-      }
-
-      .tool-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        padding: 9px 16px;
-        border-radius: var(--radius-sm);
-        font-size: 0.87rem;
-        color: var(--ink-2);
-        font-weight: 400;
-        opacity: 0;
-        transform: translateY(12px);
-        transition:
-          border-color 0.2s,
-          background 0.2s,
-          opacity 0.4s var(--easing),
-          transform 0.4s var(--easing);
-        cursor: default;
-      }
-
-      .tool-item:hover {
-        background: var(--surface);
-        border-color: var(--accent);
-      }
-
-      .tool-icon {
-        width: 20px;
-        height: 20px;
-        object-fit: contain;
-      }
-
-      /* ═══════════════════════════════════════
-         EXPERIENCE / TIMELINE
-      ═══════════════════════════════════════ */
-      .experience-section {
-        background: var(--surface-2);
-      }
-
-      .resume-section {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-lg);
-        margin-top: var(--space-md);
-      }
-
-      .resume-block-label {
-        font-family: var(--font-display);
-        font-size: 1.4rem;
-        font-weight: 300;
-        color: var(--ink);
-        margin-bottom: var(--space-md);
-        padding-bottom: var(--space-sm);
-        border-bottom: 1px solid var(--border);
-      }
-
-      .timeline {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-      }
-
-      .timeline-item {
-        padding: var(--space-md) 0 var(--space-md) var(--space-md);
-        border-left: 1px solid var(--border);
-        position: relative;
-        opacity: 0;
-        transform: translateY(18px);
-        transition:
-          opacity 0.6s var(--easing),
-          transform 0.6s var(--easing);
-      }
-
-      .timeline-item::before {
-        content: "";
-        position: absolute;
-        left: -4px;
-        top: calc(var(--space-md) + 4px);
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--surface-2);
-        border: 1.5px solid var(--accent);
-        transition: background 0.2s;
-      }
-
-      .timeline-item:hover::before {
-        background: var(--accent);
-      }
-
-      .timeline-item:last-child {
-        border-left-color: transparent;
-      }
-
-      .timeline-date {
-        font-size: 0.72rem;
-        font-weight: 500;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--accent);
-        margin-bottom: 6px;
-      }
-
-      .timeline-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 8px;
-      }
-
-      .timeline-title h4 {
-        font-family: var(--font-body);
-        font-size: 0.97rem;
-        font-weight: 500;
-        color: var(--ink);
-        margin: 0;
-        line-height: 1.3;
-      }
-
-      .timeline-icon {
-        width: 24px;
-        height: 24px;
-        object-fit: contain;
-        border-radius: 5px;
-        border: 1px solid var(--border);
-        padding: 2px;
-        background: var(--surface);
-        flex-shrink: 0;
-      }
-
-      .timeline-item p {
-        font-size: 0.88rem;
-        color: var(--ink-3);
-        line-height: 1.7;
-      }
-
-      /* ═══════════════════════════════════════
-         PROJECTS SECTION
-      ═══════════════════════════════════════ */
-      .projects-section {
-        background: var(--surface);
-        padding-bottom: calc(var(--space-xl) + 40px);
-      }
-
-      .projects-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-sm);
-        margin-top: var(--space-md);
-      }
-
-      .project-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        padding: var(--space-md);
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm);
-        opacity: 0;
-        transform: translateY(20px);
-        transition:
-          opacity 0.5s var(--easing),
-          transform 0.5s var(--easing),
-          border-color 0.25s,
-          box-shadow 0.25s;
-      }
-
-      .project-card:hover {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-2);
-        transform: translateY(-3px) !important;
-      }
-
-      .project-index {
-        font-size: 0.68rem;
-        font-weight: 500;
-        letter-spacing: 0.1em;
-        color: var(--ink-4);
-        font-variant-numeric: tabular-nums;
-      }
-
-      .project-card h4 {
-        font-family: var(--font-body);
-        font-size: 0.97rem;
-        font-weight: 500;
-        color: var(--ink);
-        line-height: 1.4;
-        flex-grow: 1;
-      }
-
-      .project-card p {
-        font-size: 0.87rem;
-        color: var(--ink-3);
-        line-height: 1.7;
-        flex-grow: 1;
-      }
-
-      .project-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        font-size: 0.82rem;
-        font-weight: 500;
-        color: var(--accent);
-        margin-top: auto;
-        padding-top: var(--space-sm);
-        border-top: 1px solid var(--border);
-        transition:
-          gap 0.2s var(--easing),
-          opacity 0.2s;
-        text-decoration: none;
-      }
-
-      .project-link::after {
-        content: "→";
-        transition: transform 0.2s var(--easing);
-      }
-
-      .project-link:hover::after {
-        transform: translateX(3px);
-      }
-
-      /* ═══════════════════════════════════════
-         FOOTER / BOTTOM SIGNATURE
-      ═══════════════════════════════════════ */
-      .page-footer {
-        padding: var(--space-md) clamp(24px, 6vw, 80px);
-        border-top: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: var(--surface);
-      }
-
-      .footer-name {
-        font-family: var(--font-display);
-        font-size: 0.9rem;
-        font-weight: 300;
-        color: var(--ink-3);
-        font-style: italic;
-      }
-
-      .footer-copy {
-        font-size: 0.78rem;
-        color: var(--ink-4);
-      }
-
-      /* ═══════════════════════════════════════
-         REVEAL ANIMATIONS (Intersection Observer)
-      ═══════════════════════════════════════ */
-      .reveal {
-        opacity: 0;
-        transform: translateY(22px);
-        transition:
-          opacity 0.65s var(--easing),
-          transform 0.65s var(--easing);
-      }
-
-      .reveal.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      .reveal-delay-1 {
-        transition-delay: 0.08s;
-      }
-      .reveal-delay-2 {
-        transition-delay: 0.16s;
-      }
-      .reveal-delay-3 {
-        transition-delay: 0.24s;
-      }
-      .reveal-delay-4 {
-        transition-delay: 0.32s;
-      }
-
-      /* ═══════════════════════════════════════
-         KEYFRAMES
-      ═══════════════════════════════════════ */
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* ═══════════════════════════════════════
-         REDUCED MOTION
-      ═══════════════════════════════════════ */
-      @media (prefers-reduced-motion: reduce) {
-        .hero-badge,
-        .hero-photo-name,
-        .hero-bio,
-        .hero-divider,
-        .hero-scroll-hint {
-          animation: none;
-          opacity: 1;
-        }
-        .reveal {
-          transition: none;
-          opacity: 1;
-          transform: none;
-        }
-        .timeline-item {
-          transition: none;
-          opacity: 1;
-          transform: none;
-        }
-        .tool-item {
-          transition: none;
-        }
-        .project-card {
-          transition: none;
-          opacity: 1;
-          transform: none;
-        }
-        .skill-fill {
-          transition: none;
-        }
-        .scroll-line {
-          animation: none;
-        }
-      }
-
-      /* ═══════════════════════════════════════
-         RESPONSIVE
-      ═══════════════════════════════════════ */
-      @media (max-width: 900px) {
-        section {
-          padding: var(--space-lg) clamp(20px, 5vw, 48px);
-        }
-
-        .info-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .skills-columns {
-          grid-template-columns: 1fr;
-          gap: var(--space-md);
-        }
-
-        .projects-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .page-footer {
-          padding: var(--space-md) clamp(20px, 5vw, 48px);
-        }
-      }
-
-      @media (max-width: 600px) {
-        section {
-          padding: var(--space-lg) var(--space-sm);
-        }
-
-        .hero {
-          padding: 80px var(--space-sm) var(--space-lg);
-        }
-
-        .page-footer {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: var(--space-xs);
-          padding: var(--space-md) var(--space-sm);
-        }
-
-        .projects-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="progress-bar" id="progressBar"></div>
-
-    <section class="hero">
-      <div class="hero-inner">
-        <div class="hero-badge">
-          <span class="status-dot"></span>
-          <span class="t-subheading">Hledám uplatnění</span>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vít Šebestík | Osobní web</title>
+    <meta name="description" content="Osobní web a portfolio - Vít Šebestík. Zjistěte více o mně a mých projektech.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="blob"></div>
+    <div id="blob-blur"></div>
+
+    <nav class="navbar reveal-nav">
+        <div class="nav-content">
+            <a href="#" class="logo">Vít.</a>
+            <div class="nav-links">
+                <a href="#o-mne">O mně</a>
+                <a href="#projekty">Projekty</a>
+                <a href="#kontakt">Kontakt</a>
+                <a href="cv.pdf" class="btn-primary-small" target="_blank">Stáhnout CV</a>
+            </div>
         </div>
+    </nav>
 
-        <div class="hero-photo-name">
-          <img
-            src="cv-photo.jpg"
-            alt="Moje profilová fotka"
-            class="profile-photo"
-          />
-          <div class="hero-name-block">
-            <h1>Mgr. Vít <em>Šebestík</em></h1>
-            <p class="hero-role">Absolvent · Počítačová lingvistika</p>
-          </div>
+    <main>
+        <!-- Hero Section -->
+        <section id="domu" class="hero">
+            <div class="hero-content">
+                <div class="hero-image-wrapper reveal">
+                    <img src="assets/cv-photo.jpg" alt="Vít Šebestík" class="hero-image">
+                    <div class="glass-badge">
+                        <span class="status-dot"></span> K dispozici pro nové výzvy
+                    </div>
+                </div>
+                <div class="hero-text">
+                    <h1 class="reveal delay-1">Ahoj, já jsem <span class="accent-text">Vít.</span></h1>
+                    <p class="subtitle reveal delay-2">Jsem absolvent počítačové lingvistiky na Masarykově univerzitě s vášní pro technologie a design. Zde nesdílím jen to, co umím, ale hlavně to, kdo jsem a co mě baví tvořit.</p>
+                    <div class="hero-actions reveal delay-3">
+                        <a href="#projekty" class="btn-primary">Moje práce</a>
+                        <a href="#o-mne" class="btn-secondary">Poznat mě lépe</a>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-indicator reveal delay-4">
+                <span>Skrolujte dolů</span>
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="o-mne" class="about">
+            <div class="section-header reveal">
+                <h2>Něco málo <span class="accent-text">o mně</span></h2>
+                <p>Kromě kódování a technologií mám spoustu dalších zájmů, které mě formují.</p>
+            </div>
+            <div class="about-grid">
+                <div class="glass-card reveal delay-1">
+                    <h3>Kdo jsem</h3>
+                    <p>Jsem čerstvý absolvent (Mgr.) počítačové lingvistiky s přesahem do frontendového i backendového vývoje. Přistupuji k práci zodpovědně, zakládám si na otevřené komunikaci a věřím, že nejlepší výsledky vznikají při spojení technické preciznosti s estetickým cítěním.</p>
+                </div>
+                <div class="glass-card reveal delay-2">
+                    <h3>Co mě baví</h3>
+                    <p>Baví mě objevovat nové technologie, designovat uživatelsky přívětivá rozhraní a pracovat na různorodých projektech od analytických nástrojů po moderní weby. Mimo digitální svět rád trávím čas s přáteli, učím se nové věci a hledám balanc v každodenním životě.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projekty" class="projects">
+            <div class="section-header reveal">
+                <h2>Vybrané <span class="accent-text">projekty</span></h2>
+                <p>Ukázka toho, na čem jsem v poslední době pracoval.</p>
+            </div>
+            <div class="projects-grid">
+                
+                <!-- Project 5 -->
+                <div class="project-card reveal delay-1">
+                    <div class="project-content">
+                        <h3>RustTools</h3>
+                        <p>Rychlá webová aplikace pro hráče survival hry Rust s mnoha kalkulačkami pro optimalizaci herní strategie.</p>
+                        <div class="tags">
+                            <span>React</span>
+                            <span>TypeScript</span>
+                            <span>Tailwind CSS</span>
+                        </div>
+                        <a href="https://www.rust-tools.eu/" target="_blank" class="project-link">Zobrazit web &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="project-card reveal delay-2">
+                    <div class="project-content">
+                        <h3>OmniDesk</h3>
+                        <p>Moderní desktopová aplikace pro komplexní správu systému a hromadnou instalaci softwaru přes Winget po čisté instalaci Windows.</p>
+                        <div class="tags">
+                            <span>Python</span>
+                            <span>Winget</span>
+                            <span>PowerShell</span>
+                        </div>
+                        <a href="https://github.com/Vissse/OmniDesk" target="_blank" class="project-link">Zobrazit na GitHubu &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 6 -->
+                <div class="project-card reveal delay-3">
+                    <div class="project-content">
+                        <h3>Interaktivní seznam přání</h3>
+                        <p>Webová aplikace pro správu dárků. Návštěvníci mohou položky procházet a anonymně rezervovat.</p>
+                        <div class="tags">
+                            <span>Vanilla JS</span>
+                            <span>Firebase</span>
+                            <span>BaaS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="project-card reveal delay-1">
+                    <div class="project-content">
+                        <h3>Audio Analysis Tool</h3>
+                        <p>Software pro analýzu zvukových korpusů s automatickou detekcí lexikálních jednotek pomocí AI.</p>
+                        <div class="tags">
+                            <span>AI</span>
+                            <span>NLP</span>
+                            <span>Python</span>
+                        </div>
+                        <a href="https://is.muni.cz/th/vdlvx/" target="_blank" class="project-link">Zobrazit práci &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 1 -->
+                <div class="project-card reveal delay-2">
+                    <div class="project-content">
+                        <h3>Analýza sentimentu titulků</h3>
+                        <p>Bakalářská práce zaměřená na NLP. Skript pro čištění titulků a sestavení korpusu pro analýzu emocí.</p>
+                        <div class="tags">
+                            <span>NLP</span>
+                            <span>Text Mining</span>
+                        </div>
+                        <a href="https://is.muni.cz/th/jprzd/" target="_blank" class="project-link">Zobrazit práci &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="project-card reveal delay-3">
+                    <div class="project-content">
+                        <h3>MP celní služby</h3>
+                        <p>Kompletní redesign a úprava webové prezentace s důrazem na moderní vizuální identitu a responzivitu.</p>
+                        <div class="tags">
+                            <span>Web Design</span>
+                            <span>UI/UX</span>
+                        </div>
+                        <a href="https://www.mpcelnisluzby.cz/" target="_blank" class="project-link">Zobrazit web &rarr;</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer id="kontakt" class="footer">
+        <div class="footer-content reveal">
+            <h2>Pojďme se <span class="accent-text">spojit</span></h2>
+            <p style="margin-bottom: 3rem;">Ať už máte nápad na projekt, nebo chcete jen říct ahoj, neváhejte se ozvat.</p>
+            
+            <div class="contact-grid">
+                <div class="contact-column">
+                    <h3>Kontakt</h3>
+                    <a href="mailto:vit.sebestik@gmail.com" class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        vit.sebestik@gmail.com
+                    </a>
+                    <a href="tel:+420777583149" class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+                        +420 777 583 149
+                    </a>
+                    <div class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span>Alžírská 1521/4<br>708 00, Ostrava-Poruba<br>Česká republika</span>
+                    </div>
+                </div>
+
+                <div class="contact-column">
+                    <h3>Sítě</h3>
+                    <div class="social-links">
+                        <a href="https://github.com/Vissse" target="_blank" class="social-icon" aria-label="GitHub">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                        </a>
+                        <a href="https://www.linkedin.com/in/v%C3%ADt-%C5%A1ebest%C3%ADk-9853aa415/?locale=en" target="_blank" class="social-icon" aria-label="LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                        <a href="https://www.instagram.com/sebestik.vit/" target="_blank" class="social-icon" aria-label="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                        </a>
+                        <a href="https://www.facebook.com/profile.php?id=61592559031749" target="_blank" class="social-icon" aria-label="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                    </div>
+                    <div class="cv-download-wrapper" style="margin-top: 2rem;">
+                        <a href="cv.pdf" class="btn-primary" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Stáhnout Životopis (PDF)
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="copyright" style="margin-top: 4rem;">&copy; 2026 Vít Šebestík. Vytvořeno s radostí.</p>
         </div>
-
-        <div class="hero-bio">
-          <p>
-            Jsem absolvent počítačové lingvistiky na Masarykově univerzitě a
-            hledám práci, která mi umožní dále rozvíjet můj potenciál. K práci
-            přistupuji zodpovědně, zakládám si na otevřené komunikaci a baví mě
-            sledovat novinky i potkávat zajímavé lidi z oboru. Zastávám názor,
-            že každá role je především příležitostí k růstu a získávání cenných
-            zkušeností. Přináším chuť do práce, spolehlivost a odhodlání
-            uplatnit své dovednosti tam, kde je potřeba. Na každou kariérní
-            výzvu se dívám jako na šanci ukázat, co ve mně je.
-          </p>
-        </div>
-
-        <div class="hero-divider"></div>
-
-        <div class="hero-scroll-hint">
-          <div class="scroll-line"></div>
-          <span class="t-small">Procházet portfolio</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="info-section">
-      <div class="section-inner">
-        <div class="section-label reveal">
-          <span class="t-subheading">Kontakt</span>
-        </div>
-        <h2 class="t-heading reveal reveal-delay-1">Kontaktní údaje</h2>
-
-        <div class="info-grid">
-          <div class="info-card reveal reveal-delay-2">
-            <p class="info-card-title">Kontakt</p>
-            <ul class="info-list">
-              <li>
-                <span class="info-label">Telefon</span>
-                <span class="info-value">+420 777 583 149</span>
-              </li>
-              <li>
-                <span class="info-label">E-mail</span>
-                <span class="info-value"
-                  >vit.sebestik@seznam.cz<br />vit.sebestik@gmail.com</span
-                >
-              </li>
-              <li>
-                <span class="info-label">Bydliště</span>
-                <span class="info-value"
-                  >Alžírská 1521/4<br />708 00, Ostrava-Poruba<br />Česká
-                  republika</span
-                >
-              </li>
-            </ul>
-          </div>
-          <div class="info-card reveal reveal-delay-3">
-            <p class="info-card-title">Osobní údaje</p>
-            <ul class="info-list">
-              <li>
-                <span class="info-label">Datum narození</span>
-                <span class="info-value">12. září 2001</span>
-              </li>
-              <li>
-                <span class="info-label">Státní příslušnost</span>
-                <span class="info-value">Česká republika</span>
-              </li>
-              <li>
-                <span class="info-label">Řidičský průkaz</span>
-                <span class="info-value">AM, B1, B</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="skills-section">
-      <div class="section-inner wide">
-        <div class="section-label reveal">
-          <span class="t-subheading">Schopnosti</span>
-        </div>
-        <h2 class="t-heading reveal reveal-delay-1">Znalosti a dovednosti</h2>
-
-        <div
-          class="skills-group-full reveal reveal-delay-2"
-          style="margin-bottom: var(--space-xl)"
-        >
-          <p class="skills-group-label">Jazyky</p>
-          <div
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-              gap: var(--space-lg);
-              margin-top: var(--space-md);
-            "
-          >
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img src="vlajka-cz.png" alt="Čeština" class="skill-icon" />
-                  <span>Čeština</span>
-                </div>
-                <span class="skill-level">C2 (Rodilý mluvčí)</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="100%"></div>
-              </div>
-            </div>
-
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img
-                    src="vlajka-uk.png"
-                    alt="Angličtina"
-                    class="skill-icon"
-                  />
-                  <span>Angličtina</span>
-                </div>
-                <span class="skill-level">B2 (Pokročilý)</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="75%"></div>
-              </div>
-            </div>
-
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img src="vlajka-de.png" alt="Němčina" class="skill-icon" />
-                  <span>Němčina</span>
-                </div>
-                <span class="skill-level">A1 (Začátečník)</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="15%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="skills-columns" style="margin-top: 0">
-          <div class="skills-group reveal reveal-delay-3">
-            <p class="skills-group-label">Front-end</p>
-
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img src="logo-html.png" alt="HTML" class="skill-icon" />
-                  <span>HTML</span>
-                  <span style="color: var(--border); margin: 0 4px">/</span>
-                  <img src="logo-css.png" alt="CSS" class="skill-icon" />
-                  <span>CSS</span>
-                </div>
-                <span class="skill-level">Mírně pokročilý</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="60%"></div>
-              </div>
-            </div>
-
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img
-                    src="logo-javascript.png"
-                    alt="JavaScript"
-                    class="skill-icon"
-                  />
-                  <span>JavaScript</span>
-                </div>
-                <span class="skill-level">Základy</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="40%"></div>
-              </div>
-            </div>
-
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img
-                    src="logo-typescript.png"
-                    alt="TypeScript"
-                    class="skill-icon"
-                  />
-                  <span>TypeScript</span>
-                </div>
-                <span class="skill-level">Základy</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="35%"></div>
-              </div>
-            </div>
-
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img src="logo-react.png" alt="React" class="skill-icon" />
-                  <span>React</span>
-                </div>
-                <span class="skill-level">Základy</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="30%"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="skills-group reveal reveal-delay-4">
-            <p class="skills-group-label">Back-end</p>
-
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img src="logo-python.png" alt="Python" class="skill-icon" />
-                  <span>Python</span>
-                </div>
-                <span class="skill-level">Mírně pokročilý</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="50%"></div>
-              </div>
-            </div>
-
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img src="logo-nodejs.png" alt="Node.js" class="skill-icon" />
-                  <span>Node.js</span>
-                </div>
-                <span class="skill-level">Základy</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="25%"></div>
-              </div>
-            </div>
-
-            <div class="skill-item">
-              <div class="skill-header">
-                <div class="skill-title">
-                  <img src="logo-sql.png" alt="SQL" class="skill-icon" />
-                  <span>SQL</span>
-                </div>
-                <span class="skill-level">Základy</span>
-              </div>
-              <div class="skill-track">
-                <div class="skill-fill" data-width="30%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="skills-group-full reveal reveal-delay-2"
-          style="margin-top: var(--space-lg)"
-        >
-          <p class="skills-group-label">Software, se kterým umím pracovat</p>
-          <div class="tools-container">
-            <div class="tool-item">
-              <img
-                src="ikonka-m365.png"
-                alt="Microsoft 365"
-                class="tool-icon"
-              />
-              <span>Microsoft 365</span>
-            </div>
-            <div class="tool-item">
-              <img src="ikonka-vscode.png" alt="VS Code" class="tool-icon" />
-              <span>VS Code</span>
-            </div>
-            <div class="tool-item">
-              <img src="ikonka-github.png" alt="GitHub" class="tool-icon" />
-              <span>GitHub</span>
-            </div>
-            <div class="tool-item">
-              <img src="ikonka-affinity.png" alt="Affinity" class="tool-icon" />
-              <span>Affinity</span>
-            </div>
-            <div class="tool-item">
-              <img
-                src="ikonka-vegas.png"
-                alt="Vegas Pro 18"
-                class="tool-icon"
-              />
-              <span>Vegas Pro 18</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="experience-section">
-      <div class="section-inner wide">
-        <div class="section-label reveal">
-          <span class="t-subheading">Kariéra</span>
-        </div>
-        <h2 class="t-heading reveal reveal-delay-1">Zkušenosti a vzdělání</h2>
-
-        <div class="resume-section">
-          <div class="resume-block">
-            <h3 class="resume-block-label reveal">Pracovní zkušenosti</h3>
-            <div class="timeline">
-              <div class="timeline-item">
-                <div class="timeline-date">2024 — 2026</div>
-                <div class="timeline-title">
-                  <img
-                    src="logo-lexonomy.png"
-                    alt="Lexonomy"
-                    class="timeline-icon"
-                  />
-                  <h4>Lexonomy</h4>
-                </div>
-                <p>
-                  Jako člen lexikografického týmu zodpovídám za selekci hesel
-                  pro nově vznikající slovník současné češtiny. Mou náplní práce
-                  je strukturace slovníkových položek, což zahrnuje rozlišování
-                  sémantických významů a morfologických tvarů. Součástí mé role
-                  je také monitoring aktuálního jazykového úzu a pečlivý výběr
-                  dokladových vět.
-                </p>
-              </div>
-
-              <div class="timeline-item">
-                <div class="timeline-date">2025 — 2026 (cca 6 měsíců)</div>
-                <div class="timeline-title">
-                  <img
-                    src="logo-phalanx.png"
-                    alt="Phalanx Czech"
-                    class="timeline-icon"
-                  />
-                  <h4>Phalanx Czech s.r.o.</h4>
-                </div>
-                <p>
-                  Spolupracoval jsem na přípravě kurzu zaměřeného na gramotnost
-                  v oblasti umělé inteligence. Pomáhal jsem s definováním
-                  metodiky pro správné zdrojování a citování výstupů generativní
-                  AI v souladu s aktuálními regulacemi. Současně jsem se podílel
-                  na vizuálním zpracování materiálů a dbal na jejich
-                  uživatelskou přívětivost.
-                </p>
-              </div>
-
-              <div class="timeline-item">
-                <div class="timeline-date">2024 (cca 3 měsíce)</div>
-                <div class="timeline-title">
-                  <img
-                    src="logo-pracuj.png"
-                    alt="Pracuj Digital"
-                    class="timeline-icon"
-                  />
-                  <h4>Pracuj Digital</h4>
-                </div>
-                <p>
-                  Prováděl jsem odborné korektury a post-editaci českých textů
-                  vzniklých automatickým přepisem. Zajišťoval jsem, aby finální
-                  textová podoba gramaticky i sémanticky přesně odpovídala audio
-                  záznamu, a eliminoval jsem nepřesnosti způsobené softwarem.
-                </p>
-              </div>
-
-              <div class="timeline-item">
-                <div class="timeline-date">2022 — 2024</div>
-                <div class="timeline-title">
-                  <img
-                    src="logo-pocitarna.png"
-                    alt="Počítárna"
-                    class="timeline-icon"
-                  />
-                  <h4>Počítárna</h4>
-                </div>
-                <p>
-                  Měl jsem na starosti diagnostiku a kontrolu funkčnosti
-                  elektronických zařízení (od mobilů po PC). Specializoval jsem
-                  se na detekci hardwarových chyb a softwarové nastavení
-                  přístrojů. Kromě technické činnosti jsem se aktivně podílel na
-                  skladových úkonech.
-                </p>
-              </div>
-
-              <div class="timeline-item">
-                <div class="timeline-date">2021 — 2024</div>
-                <div class="timeline-title">
-                  <img
-                    src="logo-tempo.png"
-                    alt="Tempo Training"
-                    class="timeline-icon"
-                  />
-                  <h4>Tempo Training &amp; Consulting a.s.</h4>
-                </div>
-                <p>
-                  Nastoupil jsem jako administrativní podpora pro zpracování
-                  dat. Vypracoval jsem se na pozici vedoucího směny, kde jsem
-                  převzal zodpovědnost za vedení týmu až 30 brigádníků, kontrolu
-                  jejich výkonu a dodržování předepsaných standardů. Zajišťoval
-                  jsem také kompletní zaškolování a mentoring.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="resume-block">
-            <h3 class="resume-block-label reveal">Vzdělání</h3>
-            <div class="timeline">
-              <div class="timeline-item">
-                <div class="timeline-date">2024 — 2026</div>
-                <div class="timeline-title">
-                  <img src="logo-muni.png" alt="MUNI" class="timeline-icon" />
-                  <h4>Filozofická fakulta Masarykovy univerzity, Brno-střed</h4>
-                </div>
-                <p>
-                  Počítačová lingvistika - magisterský studijní program<br />
-                  Ukončení studia včetně státní zkoušky, udělen titul: Mgr., v
-                  roce 2026
-                </p>
-              </div>
-
-              <div class="timeline-item">
-                <div class="timeline-date">2021 — 2024</div>
-                <div class="timeline-title">
-                  <img src="logo-muni.png" alt="MUNI" class="timeline-icon" />
-                  <h4>Filozofická fakulta Masarykovy univerzity, Brno-střed</h4>
-                </div>
-                <p>
-                  Počítačová lingvistika - bakalářský studijní program<br />
-                  Ukončení studia včetně státní zkoušky, udělen titul: Bc., v
-                  roce 2024
-                </p>
-              </div>
-
-              <div class="timeline-item">
-                <div class="timeline-date">2013 — 2021</div>
-                <div class="timeline-title">
-                  <img
-                    src="logo-gymnazium.png"
-                    alt="Gymnázium"
-                    class="timeline-icon"
-                  />
-                  <h4>Všeobecné gymnázium Volgogradská 6a, Ostrava-Zábřeh</h4>
-                </div>
-                <p>79-41-K/81<br />Úspěšně zakončeno maturitní zkouškou.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="projects-section">
-      <div class="section-inner wide">
-        <div class="section-label reveal">
-          <span class="t-subheading">Práce</span>
-        </div>
-        <h2 class="t-heading reveal reveal-delay-1">Portfolio projektů</h2>
-
-        <div class="projects-grid">
-          <div class="project-card">
-            <span class="project-index">01</span>
-            <h4>Analýza sentimentu titulků</h4>
-            <p>
-              Bakalářská práce zaměřená na NLP. Vytvořil jsem skript pro
-              automatizované čištění českých titulků, obohatil je o metadata a
-              sestavil textový korpus pro analýzu emocionálního zabarvení napříč
-              žánry.
-            </p>
-            <a
-              href="https://is.muni.cz/auth/th/jprzd/"
-              target="_blank"
-              class="project-link"
-              >Zobrazit práci</a
-            >
-          </div>
-
-          <div class="project-card">
-            <span class="project-index">02</span>
-            <h4>
-              Automatická detekce lexikálních jednotek v neanotované spontánní
-              řeči
-            </h4>
-            <p>
-              Vyvinul jsem software Audio Analysis Tool, který umožňuje analýzu
-              zvukových korpusů. Aplikace v sobě spojuje kompletní výpočetní
-              pipeline od předzpracování zvuku a extrakce hlasové aktivity až po
-              samotnou detekci slov pomocí pokročilých AI modelů.
-            </p>
-            <a
-              href="https://is.muni.cz/auth/th/vdlvx/"
-              target="_blank"
-              class="project-link"
-              >Zobrazit práci</a
-            >
-          </div>
-
-          <div class="project-card">
-            <span class="project-index">03</span>
-            <h4>OmniDesk</h4>
-            <p>
-              Vyvíjím moderní desktopovou aplikaci OmniDesk v Pythonu, která
-              slouží jako komplexní správce systému a nástroj pro automatizaci
-              po čisté instalaci Windows. Nástroj je plně postaven na ekosystému
-              Winget, což umožňuje bezobslužnou hromadnou instalaci, aktualizaci
-              a čistou odinstalaci softwaru přímo z grafického rozhraní.
-              Vybranou instalační frontu navíc dokáže exportovat jako samostatný
-              PowerShell skript. Aplikace dále obsahuje detailní HW diagnostiku,
-              modul pro optimalizaci a opravu systému (SFC, DISM, čištění tempů
-              a integraci Chris Titus Tool) a inteligentní systém automatických
-              aktualizací skrze GitHub API.
-            </p>
-            <a
-              href="https://github.com/Vissse/OmniDesk"
-              target="_blank"
-              class="project-link"
-              >Zobrazit projekt na GitHubu</a
-            >
-          </div>
-
-          <div class="project-card">
-            <span class="project-index">04</span>
-            <h4>Web design: MP celní služby</h4>
-            <p>
-              Kompletní redesign a úprava webové prezentace pro společnost MP
-              celní služby. Navrhl jsem moderní vizuální identitu a zajistil
-              plnou technickou funkčnost s důrazem na uživatelskou přívětivost a
-              responzivitu.
-            </p>
-            <a
-              href="https://www.mpcelnisluzby.cz/"
-              target="_blank"
-              class="project-link"
-              >Zobrazit web</a
-            >
-          </div>
-
-          <div class="project-card">
-            <span class="project-index">05</span>
-            <h4>RustTools</h4>
-            <p>
-              Na tomto projektu v současnosti aktivně spolupracuji se svým
-              kamarádem. Jedná se o rychlou webovou aplikaci pro hráče survival
-              hry Rust. Obsahuje sadu specializovaných kalkulaček:
-              <strong>Raid Calculator</strong> pro optimalizaci nákladů na
-              výbušniny, <strong>Recycling Calculator</strong> pro přesný
-              výpočet získaných surovin a
-              <strong>Cupboard Calculator</strong> pro správu údržby základny.
-              Aplikace je postavena na moderním stacku: React, TypeScript, Vite,
-              TanStack Router a Tailwind CSS, přičemž veškerá herní data a
-              logika jsou striktně odděleny pro snadnou aktualizaci.
-            </p>
-            <a
-              href="https://www.rust-tools.eu/"
-              target="_blank"
-              class="project-link"
-              >Zobrazit web</a
-            >
-            <div
-              style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap"
-            >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  background: var(--surface-2);
-                  padding: 2px 6px;
-                  border-radius: 4px;
-                  color: var(--ink-3);
-                  border: 1px solid var(--border);
-                "
-                >React</span
-              >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  background: var(--surface-2);
-                  padding: 2px 6px;
-                  border-radius: 4px;
-                  color: var(--ink-3);
-                  border: 1px solid var(--border);
-                "
-                >TypeScript</span
-              >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  background: var(--surface-2);
-                  padding: 2px 6px;
-                  border-radius: 4px;
-                  color: var(--ink-3);
-                  border: 1px solid var(--border);
-                "
-                >Tailwind CSS</span
-              >
-            </div>
-            <a
-              href="https://github.com/Vissse/RustTools"
-              target="_blank"
-              class="project-link"
-              >Zobrazit projekt na GitHubu</a
-            >
-          </div>
-
-          <div class="project-card">
-            <span class="project-index">06</span>
-            <h4>Interaktivní seznam přání</h4>
-            <p>
-              Vlastní dynamická webová aplikace pro správu a sdílení osobních
-              tipů na dárky. Návštěvníci mohou položky procházet, filtrovat,
-              ukládat do oblíbených a především anonymně rezervovat, čímž se
-              předchází duplicitám. Součástí je i zabezpečené administrátorské
-              rozhraní pro přidávání položek, nahrávání obrázků a úpravu pořadí
-              (drag-and-drop). Frontend je napsaný v čistém JavaScriptu (Vanilla
-              JS) bez použití těžkých frameworků, backendovou logiku a databázi
-              kompletně obstarává BaaS platforma Supabase.
-            </p>
-            <div
-              style="
-                display: flex;
-                gap: 8px;
-                margin-top: auto;
-                padding-top: 12px;
-                flex-wrap: wrap;
-              "
-            >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  background: var(--surface-2);
-                  padding: 2px 6px;
-                  border-radius: 4px;
-                  color: var(--ink-3);
-                  border: 1px solid var(--border);
-                "
-                >Vanilla JS</span
-              >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  background: var(--surface-2);
-                  padding: 2px 6px;
-                  border-radius: 4px;
-                  color: var(--ink-3);
-                  border: 1px solid var(--border);
-                "
-                >Supabase (BaaS)</span
-              >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  background: var(--surface-2);
-                  padding: 2px 6px;
-                  border-radius: 4px;
-                  color: var(--ink-3);
-                  border: 1px solid var(--border);
-                "
-                >HTML5 & CSS3</span
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="page-footer">
-      <span class="footer-name">Mgr. Vít Šebestík</span>
-      <span class="footer-copy">© 2026 · Všechna práva vyhrazena</span>
     </footer>
 
-    <script>
-      /* ─── 1. Spine progress line ─── */
-      const progressBar = document.getElementById("progressBar");
-      function updateProgress() {
-        const scrolled = window.scrollY;
-        const total =
-          document.documentElement.scrollHeight - window.innerHeight;
-        const pct = total > 0 ? (scrolled / total) * 100 : 0;
-        progressBar.style.width = pct + "%";
-      }
-      window.addEventListener("scroll", updateProgress, { passive: true });
-
-      /* ─── 2. Intersection Observer for .reveal & .timeline-item & .project-card ─── */
-      const revealObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-              revealObserver.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
-      );
-
-      document
-        .querySelectorAll(".reveal")
-        .forEach((el) => revealObserver.observe(el));
-
-      /* ─── 3. Timeline items staggered reveal ─── */
-      const timelineObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              // stagger siblings
-              const siblings = entry.target
-                .closest(".timeline")
-                .querySelectorAll(".timeline-item");
-              siblings.forEach((item, i) => {
-                setTimeout(() => {
-                  item.style.opacity = "1";
-                  item.style.transform = "translateY(0)";
-                }, i * 120);
-              });
-              timelineObserver.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.05 },
-      );
-
-      document.querySelectorAll(".timeline").forEach((tl) => {
-        const firstItem = tl.querySelector(".timeline-item");
-        if (firstItem) timelineObserver.observe(firstItem);
-      });
-
-      /* ─── 4. Skill fill bars ─── */
-      const skillObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.querySelectorAll(".skill-fill").forEach((fill) => {
-                fill.style.width = fill.getAttribute("data-width");
-              });
-              skillObserver.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.2 },
-      );
-
-      document
-        .querySelectorAll(".skills-section")
-        .forEach((s) => skillObserver.observe(s));
-
-      /* ─── 5. Tool items staggered appear ─── */
-      const toolObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.querySelectorAll(".tool-item").forEach((item, i) => {
-                setTimeout(() => {
-                  item.style.opacity = "1";
-                  item.style.transform = "translateY(0)";
-                }, i * 80);
-              });
-              toolObserver.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.2 },
-      );
-
-      document
-        .querySelectorAll(".tools-container")
-        .forEach((tc) => toolObserver.observe(tc));
-
-      /* ─── 6. Project cards staggered appear ─── */
-      const projectObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const cards = entry.target.querySelectorAll(".project-card");
-              cards.forEach((card, i) => {
-                setTimeout(() => {
-                  card.style.opacity = "1";
-                  card.style.transform = "translateY(0)";
-                }, i * 100);
-              });
-              projectObserver.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.05 },
-      );
-
-      document
-        .querySelectorAll(".projects-grid")
-        .forEach((pg) => projectObserver.observe(pg));
-    </script>
-  </body>
+    <script src="script.js"></script>
+</body>
 </html>

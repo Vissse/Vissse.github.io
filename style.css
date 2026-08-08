@@ -657,9 +657,11 @@ a.contact-item:hover {
     }
     
     .glass-badge {
-        left: 50%;
-        transform: translateX(-50%);
+        left: 0;
         bottom: -20px;
+        width: 100%;
+        transform: none;
+        justify-content: center;
     }
     
     .scroll-indicator {

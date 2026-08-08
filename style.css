@@ -292,6 +292,7 @@ section {
 .hero-image-wrapper {
     position: relative;
     flex-shrink: 0;
+    display: inline-block;
 }
 
 .hero-image {

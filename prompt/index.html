@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Prompty</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-color: #0b0c10;
+        --text-main: #f0f2f5;
+        --text-muted: #9ba1a6;
+        --accent: #6ee7b7;
+        --accent-glow: rgba(110, 231, 183, 0.4);
+        --accent-hover: #34d399;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --font-sans: "Inter", sans-serif;
+        --font-heading: "Outfit", sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { overflow-x: hidden; }
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        font-family: var(--font-sans);
+        line-height: 1.6;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      h1, h2, h3 { font-family: var(--font-heading); font-weight: 700; line-height: 1.2; }
+      a { text-decoration: none; color: inherit; }
+      .accent-text { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+
+      #blob {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
+        width: 500px;
+        height: 500px;
+        background: linear-gradient(to right, var(--accent), mediumpurple);
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.3;
+        z-index: 0;
+        pointer-events: none;
+        animation: rotate 20s infinite linear;
+        will-change: transform;
+        transform: translateZ(0);
+      }
+      @keyframes rotate {
+        from { rotate: 0deg; }
+        50% { scale: 1 1.2; }
+        to { rotate: 360deg; }
+      }
+
+      main { position: relative; z-index: 2; }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+      }
+      .reveal.active { opacity: 1; transform: translateY(0); }
+      .delay-1 { transition-delay: 0.05s; }
+      .delay-2 { transition-delay: 0.1s; }
+      .delay-3 { transition-delay: 0.15s; }
+      .delay-4 { transition-delay: 0.2s; }
+      .delay-5 { transition-delay: 0.25s; }
+      .delay-6 { transition-delay: 0.3s; }
+      .delay-7 { transition-delay: 0.35s; }
+      .delay-8 { transition-delay: 0.4s; }
+
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 5rem 5% 6rem;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        transition: 0.3s;
+      }
+      .back-link:hover { color: var(--accent); transform: translateX(-3px); }
+      .back-link svg { flex-shrink: 0; }
+
+      .page-header { margin-bottom: 3rem; }
+      .page-header h1 { font-size: clamp(2.2rem, 5vw, 3rem); letter-spacing: -1px; margin-bottom: 0.75rem; }
+      .page-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 600px; }
+
+      .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .prompt-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: block;
+      }
+
+      .prompt-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(110, 231, 183, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+      }
+
+      .prompt-card h3 { font-size: 1.3rem; margin-bottom: 0.6rem; }
+      .prompt-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.2rem; }
+
+      .prompt-open {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .prompt-card:hover .prompt-open { letter-spacing: 0.5px; }
+    </style>
+  </head>
+  <body>
+    <div id="blob"></div>
+
+    <main>
+      <a class="back-link reveal" href="../">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Zpět na web
+      </a>
+
+      <div class="page-header reveal">
+        <h1>Moje <span class="accent-text">prompty</span></h1>
+        <p>Sbírka promptů, které používám. Klikni na kartu pro zobrazení a zkopírování.</p>
+      </div>
+
+      <div class="prompt-grid">
+        <a class="prompt-card reveal delay-1" href="typograficka-korektura/">
+          <h3>Typografická korektura</h3>
+          <p>Korektura typografie a interpunkce odborných českých textů (uvozovky, pomlčky, mezery, procenta, čísla…).</p>
+          <span class="prompt-open">Zobrazit prompt →</span>
+        </a>
+        <a class="prompt-card reveal delay-2" href="parafraze-a-citace/">
+          <h3>Parafráze a citace</h3>
+          <p>Kontrola akademické integrity: odhalí patchwriting, nejasné hranice mezi zdrojem a vlastním textem, chybějící odkazy i zbytečné přímé citace.</p>
+          <span class="prompt-open">Zobrazit prompt →</span>
+        </a>
+        <a class="prompt-card reveal delay-3" href="oponentni-posudek-obhajoba/">
+          <h3>Oponentní posudek a obhajoba</h3>
+          <p>Nekompromisní oponentský posudek podle akademických kritérií a příprava na obhajobu — 10–15 pravděpodobných otázek a zranitelná místa práce.</p>
+          <span class="prompt-open">Zobrazit prompt →</span>
+        </a>
+        <a class="prompt-card reveal delay-4" href="podekovani/">
+          <h3>Poděkování</h3>
+          <p>Napíše nebo zkontroluje poděkování v závěrečné práci ve třech délkových variantách, se správně uvedenými tituly a bez patosu.</p>
+          <span class="prompt-open">Zobrazit prompt →</span>
+        </a>
+        <a class="prompt-card reveal delay-5" href="zaver-prace/">
+          <h3>Závěr práce</h3>
+          <p>Napíše nebo zkontroluje závěr bakalářské/diplomové práce tak, aby skutečně odpověděl na to, co slíbil úvod — bez pouhého převyprávění obsahu.</p>
+          <span class="prompt-open">Zobrazit prompt →</span>
+        </a>
+        <a class="prompt-card reveal delay-6" href="uvod-prace/">
+          <h3>Úvod práce</h3>
+          <p>Napíše nebo zkontroluje úvod bakalářské/diplomové práce tak, aby jasně vymezoval problém a cíl — bez obecného kroužení kolem tématu.</p>
+          <span class="prompt-open">Zobrazit prompt →</span>
+        </a>
+        <a class="prompt-card reveal delay-7" href="abstrakt-a-anotace/">
+          <h3>Abstrakt a anotace</h3>
+          <p>Napíše nebo zkontroluje abstrakt a anotaci práce (česky i anglicky) tak, aby dávaly úplný smysl i samostatně, bez záměny obou žánrů.</p>
+          <span class="prompt-open">Zobrazit prompt →</span>
+        </a>
+        <a class="prompt-card reveal delay-8" href="resume/">
+          <h3>Resumé</h3>
+          <p>Napíše nebo zkontroluje resumé práce v jazyce práce i v cizojazyčné verzi — jasnými větami shrnuje problém, postup, závěry i přínos.</p>
+          <span class="prompt-open">Zobrazit prompt →</span>
+        </a>
+      </div>
+    </main>
+
+    <script>
+      const revealEls = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("active");
+            obs.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
+      );
+      revealEls.forEach((el) => io.observe(el));
+
+      const blob = document.getElementById("blob");
+      if (blob) {
+        window.addEventListener("mousemove", (e) => {
+          if (window.innerWidth <= 992) return;
+          const { clientX, clientY } = e;
+          blob.animate(
+            { left: `${clientX}px`, top: `${clientY}px` },
+            { duration: 3000, fill: "forwards" }
+          );
+        });
+      }
+    </script>
+  </body>
+</html>

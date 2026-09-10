@@ -92,7 +92,7 @@ export default function App() {
         <section id="domu" className="hero">
           <div className="hero-content">
             <div className="hero-image-wrapper reveal">
-              <img src="assets/cv-photo.jpg" alt="Vít Šebestík" className="hero-image" />
+              <img src="assets/cv-photo.webp" alt="Vít Šebestík" className="hero-image" />
             </div>
             <div className="hero-text">
               <h1 className="reveal delay-1">Vít <span className="accent-text">Šebestík</span></h1>

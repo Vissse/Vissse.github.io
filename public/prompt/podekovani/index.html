@@ -436,27 +436,29 @@
       /* ── Content ── */
       function revealMarkdown() {
         try {
-          const blocks = promptEl.querySelectorAll(
-            ":scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > hr, :scope > table"
+          const blocks = Array.from(
+            promptEl.querySelectorAll(
+              ":scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > hr, :scope > table"
+            )
           );
+          blocks.forEach((el) => el.classList.add("md-reveal"));
           if (window.IntersectionObserver) {
             const mdIo = new IntersectionObserver(
               (entries, obs) => {
-                entries.forEach((entry) => {
-                  if (!entry.isIntersecting) return;
-                  entry.target.classList.add("md-active");
-                  obs.unobserve(entry.target);
-                });
+                entries
+                  .filter((entry) => entry.isIntersecting)
+                  .sort((a, b) => blocks.indexOf(a.target) - blocks.indexOf(b.target))
+                  .forEach((entry, i) => {
+                    entry.target.style.transitionDelay = `${i * 0.07}s`;
+                    entry.target.classList.add("md-active");
+                    obs.unobserve(entry.target);
+                  });
               },
               { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
             );
-            blocks.forEach((el, i) => {
-              el.classList.add("md-reveal");
-              el.style.transitionDelay = `${(i % 6) * 0.06}s`;
-              mdIo.observe(el);
-            });
+            blocks.forEach((el) => mdIo.observe(el));
           } else {
-            blocks.forEach((el) => el.classList.add("md-reveal", "md-active"));
+            blocks.forEach((el) => el.classList.add("md-active"));
           }
         } catch (e) {
           /* decorative only */

@@ -166,7 +166,36 @@
         padding: 2.5rem;
       }
 
-      .loading { color: var(--text-muted); }
+      /* ── Skeleton loading ── */
+      .md-skeleton { display: flex; flex-direction: column; gap: 0.9rem; transition: opacity 0.18s ease; }
+      .md-skeleton.md-active-out { opacity: 0; }
+      .sk-line {
+        height: 14px;
+        border-radius: 7px;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.1) 37%, rgba(255, 255, 255, 0.04) 63%);
+        background-size: 400% 100%;
+        animation: sk-shimmer 1.6s ease-in-out infinite;
+      }
+      .sk-w95 { width: 95%; }
+      .sk-w90 { width: 90%; }
+      .sk-w85 { width: 85%; }
+      .sk-w75 { width: 75%; }
+      .sk-w60 { width: 60%; }
+      .sk-w40 { width: 40%; }
+      .sk-gap { height: 0.5rem; }
+      @keyframes sk-shimmer {
+        0% { background-position: 100% 50%; }
+        100% { background-position: 0 50%; }
+      }
+
+      /* ── Markdown reveal-on-scroll ── */
+      .md-reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .md-reveal.md-active { opacity: 1; transform: translateY(0); }
+      .md-error { color: var(--text-muted); }
 
       /* ── Markdown rendering ── */
       .markdown-body { font-size: 0.98rem; }
@@ -295,7 +324,18 @@
       </div>
 
       <div class="prompt-box">
-        <div id="promptText" class="markdown-body loading">Načítám prompt…</div>
+        <div id="promptText" class="markdown-body">
+          <div id="skeleton" class="md-skeleton" aria-hidden="true">
+            <div class="sk-line sk-w40"></div>
+            <div class="sk-line sk-w95"></div>
+            <div class="sk-line sk-w85"></div>
+            <div class="sk-line sk-w90"></div>
+            <div class="sk-gap"></div>
+            <div class="sk-line sk-w60"></div>
+            <div class="sk-line sk-w75"></div>
+            <div class="sk-line sk-w95"></div>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -394,17 +434,52 @@
       }
 
       /* ── Content ── */
+      function revealMarkdown() {
+        try {
+          const blocks = promptEl.querySelectorAll(
+            ":scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > hr, :scope > table"
+          );
+          if (window.IntersectionObserver) {
+            const mdIo = new IntersectionObserver(
+              (entries, obs) => {
+                entries.forEach((entry) => {
+                  if (!entry.isIntersecting) return;
+                  entry.target.classList.add("md-active");
+                  obs.unobserve(entry.target);
+                });
+              },
+              { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
+            );
+            blocks.forEach((el, i) => {
+              el.classList.add("md-reveal");
+              el.style.transitionDelay = `${(i % 6) * 0.06}s`;
+              mdIo.observe(el);
+            });
+          } else {
+            blocks.forEach((el) => el.classList.add("md-reveal", "md-active"));
+          }
+        } catch (e) {
+          /* decorative only */
+        }
+      }
+
       fetch(promptUrl)
         .then((r) => r.text())
         .then((text) => {
           rawText = text;
-          promptEl.innerHTML =
-            typeof marked !== "undefined" ? marked.parse(text) : text;
-          promptEl.classList.remove("loading");
+          const html = typeof marked !== "undefined" ? marked.parse(text) : text;
+          const skeleton = document.getElementById("skeleton");
+          if (skeleton) skeleton.classList.add("md-active-out");
+          setTimeout(
+            () => {
+              promptEl.innerHTML = html;
+              revealMarkdown();
+            },
+            skeleton ? 180 : 0
+          );
         })
         .catch(() => {
-          promptEl.textContent = "Nepodařilo se načíst obsah promptu.";
-          promptEl.classList.remove("loading");
+          promptEl.innerHTML = '<p class="md-error">Nepodařilo se načíst obsah promptu.</p>';
         });
     </script>
   </body>

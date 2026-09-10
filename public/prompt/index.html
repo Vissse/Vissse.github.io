@@ -4,21 +4,63 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
-      try {
-        if (typeof navigation !== "undefined") {
-          const markBack = (e) => {
-            if (e.viewTransition && navigation.activation && navigation.activation.navigationType === "traverse") {
-              const from = navigation.activation.from ? navigation.activation.from.index : -1;
-              const to = navigation.activation.entry ? navigation.activation.entry.index : -1;
-              if (to < from) document.documentElement.classList.add("vt-back");
+      (function () {
+        try {
+          var nativeVT = "startViewTransition" in document;
+          if (nativeVT) {
+            if (typeof navigation !== "undefined") {
+              var markBack = function (e) {
+                if (e.viewTransition && navigation.activation && navigation.activation.navigationType === "traverse") {
+                  var from = navigation.activation.from ? navigation.activation.from.index : -1;
+                  var to = navigation.activation.entry ? navigation.activation.entry.index : -1;
+                  if (to < from) document.documentElement.classList.add("vt-back");
+                }
+              };
+              addEventListener("pageswap", markBack);
+              addEventListener("pagereveal", markBack);
             }
-          };
-          addEventListener("pageswap", markBack);
-          addEventListener("pagereveal", markBack);
+            return;
+          }
+
+          /* Manual fallback slide transition for browsers without cross-document View Transitions (Firefox, Safari) */
+          var STORE_KEY = "vt-direction";
+          var navEntries = performance.getEntriesByType ? performance.getEntriesByType("navigation") : [];
+          var navType = navEntries.length ? navEntries[0].type : "navigate";
+          var storedDir = sessionStorage.getItem(STORE_KEY);
+          sessionStorage.removeItem(STORE_KEY);
+          var enterLeft = storedDir === "back" || (!storedDir && navType === "back_forward");
+          document.documentElement.classList.add(enterLeft ? "vt-enter-left" : "vt-enter-right");
+          addEventListener("pageshow", function () {
+            document.documentElement.classList.remove("vt-enter-left", "vt-enter-right");
+          });
+
+          document.addEventListener(
+            "click",
+            function (e) {
+              if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              var a = e.target.closest("a[href]");
+              if (!a || a.hasAttribute("download") || (a.target && a.target !== "" && a.target !== "_self")) return;
+              var url;
+              try {
+                url = new URL(a.href, location.href);
+              } catch (err) {
+                return;
+              }
+              if (url.origin !== location.origin || url.pathname === location.pathname) return;
+              var isBack = a.classList.contains("back-link");
+              e.preventDefault();
+              sessionStorage.setItem(STORE_KEY, isBack ? "back" : "forward");
+              document.documentElement.classList.add(isBack ? "vt-exit-right" : "vt-exit-left");
+              setTimeout(function () {
+                location.href = a.href;
+              }, 260);
+            },
+            true
+          );
+        } catch (e) {
+          /* decorative only */
         }
-      } catch (e) {
-        /* decorative only */
-      }
+      })();
     </script>
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
@@ -49,6 +91,16 @@
       @keyframes vt-slide-in-right { from { transform: translateX(12%); opacity: 0; } }
       @keyframes vt-slide-out-right { to { transform: translateX(12%); opacity: 0; } }
       @keyframes vt-slide-in-left { from { transform: translateX(-12%); opacity: 0; } }
+
+      /* Manual fallback for browsers without cross-document View Transitions (Firefox, Safari) */
+      html.vt-exit-left body { animation: vt-manual-out-left 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      html.vt-exit-right body { animation: vt-manual-out-right 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      html.vt-enter-right body { animation: vt-manual-in-right 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+      html.vt-enter-left body { animation: vt-manual-in-left 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+      @keyframes vt-manual-out-left { to { transform: translateX(-10%); opacity: 0; } }
+      @keyframes vt-manual-out-right { to { transform: translateX(10%); opacity: 0; } }
+      @keyframes vt-manual-in-right { from { transform: translateX(10%); opacity: 0; } }
+      @keyframes vt-manual-in-left { from { transform: translateX(-10%); opacity: 0; } }
 
       :root {
         --bg-color: #0b0c10;

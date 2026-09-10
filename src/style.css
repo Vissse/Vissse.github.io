@@ -50,6 +50,17 @@ html.vt-back::view-transition-new(root) { animation-name: vt-slide-in-left; }
     from { transform: translateX(-12%); opacity: 0; }
 }
 
+/* Manual fallback for browsers without cross-document View Transitions (e.g. Firefox, Safari) */
+html.vt-exit-left body { animation: vt-manual-out-left 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+html.vt-exit-right body { animation: vt-manual-out-right 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+html.vt-enter-right body { animation: vt-manual-in-right 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+html.vt-enter-left body { animation: vt-manual-in-left 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes vt-manual-out-left { to { transform: translateX(-10%); opacity: 0; } }
+@keyframes vt-manual-out-right { to { transform: translateX(10%); opacity: 0; } }
+@keyframes vt-manual-in-right { from { transform: translateX(10%); opacity: 0; } }
+@keyframes vt-manual-in-left { from { transform: translateX(-10%); opacity: 0; } }
+
 /* ═══════════════════════════════════════
    RESET & GLOBAL
 ═══════════════════════════════════════ */

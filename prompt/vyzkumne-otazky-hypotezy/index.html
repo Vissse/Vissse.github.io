@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Prompt: Výzkumné otázky a hypotézy</title>
+    <link rel="preload" href="../../prompt-vyzkumne-otazky-hypotezy.md" as="fetch" />
+    <link rel="preload" href="../vendor/marked.min.js" as="script" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-color: #0b0c10;
+        --text-main: #f0f2f5;
+        --text-muted: #9ba1a6;
+        --accent: #6ee7b7;
+        --accent-glow: rgba(110, 231, 183, 0.4);
+        --accent-hover: #34d399;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --font-sans: "Inter", sans-serif;
+        --font-heading: "Outfit", sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { overflow-x: hidden; }
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        font-family: var(--font-sans);
+        line-height: 1.6;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      h1 { font-family: var(--font-heading); font-weight: 700; }
+      a { text-decoration: none; color: inherit; }
+      .accent-text { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+
+      #blob {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
+        width: 500px;
+        height: 500px;
+        background: linear-gradient(to right, var(--accent), mediumpurple);
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.3;
+        z-index: 0;
+        pointer-events: none;
+        animation: rotate 20s infinite linear;
+        will-change: transform;
+        transform: translateZ(0);
+      }
+      @keyframes rotate {
+        from { rotate: 0deg; }
+        50% { scale: 1 1.2; }
+        to { rotate: 360deg; }
+      }
+
+      main { position: relative; z-index: 2; }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+      }
+      .reveal.active { opacity: 1; transform: translateY(0); }
+      .delay-1 { transition-delay: 0.05s; }
+      .delay-2 { transition-delay: 0.1s; }
+
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 3rem 5% 6rem;
+      }
+
+      .back-links {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        transition: 0.3s;
+      }
+      .back-link:hover { color: var(--accent); transform: translateX(-3px); }
+      .back-link svg { flex-shrink: 0; }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+      }
+      .page-header h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); letter-spacing: -1px; }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background: none;
+        border: none;
+        color: var(--accent);
+        cursor: pointer;
+        transition: color 0.3s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        flex-shrink: 0;
+        filter: drop-shadow(0 0 8px var(--accent-glow));
+      }
+      .icon-btn:hover {
+        color: var(--accent-hover);
+        transform: scale(1.1);
+      }
+      .icon-btn.copied { color: var(--accent-hover); }
+
+      #copyBtn {
+        position: relative;
+      }
+      #copyBtn svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
+        opacity: 0;
+        transform: scale(0.5) rotate(-45deg);
+        transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+      }
+      #copyBtn svg.icon-visible {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+
+      .prompt-box {
+        position: relative;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+        padding: 2.5rem;
+      }
+
+      .loading { color: var(--text-muted); }
+
+      /* ── Markdown rendering ── */
+      .markdown-body { font-size: 0.98rem; }
+      .markdown-body > *:first-child { margin-top: 0 !important; }
+
+      .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--text-main);
+        line-height: 1.3;
+      }
+      .markdown-body h1 { font-size: 1.5rem; margin: 2.2rem 0 1rem; }
+      .markdown-body h2 {
+        font-size: 1.25rem;
+        margin: 2.4rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--glass-border);
+      }
+      .markdown-body h3 { font-size: 1.05rem; margin: 1.8rem 0 0.75rem; color: var(--accent); }
+      .markdown-body h4 { font-size: 0.95rem; margin: 1.4rem 0 0.5rem; }
+
+      .markdown-body p { color: var(--text-main); margin: 0.9rem 0; }
+      .markdown-body strong { color: var(--text-main); font-weight: 700; }
+      .markdown-body em { color: var(--text-muted); }
+
+      .markdown-body ul, .markdown-body ol { margin: 0.9rem 0; padding-left: 1.4rem; }
+      .markdown-body li { margin: 0.4rem 0; }
+      .markdown-body li::marker { color: var(--accent); }
+
+      .markdown-body code {
+        background: rgba(110, 231, 183, 0.1);
+        border: 1px solid rgba(110, 231, 183, 0.25);
+        color: var(--accent);
+        border-radius: 6px;
+        padding: 0.15rem 0.45rem;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.85em;
+        white-space: pre-wrap;
+      }
+
+      .markdown-body pre {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 1.2rem;
+        overflow-x: auto;
+        margin: 1.2rem 0;
+      }
+      .markdown-body pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        color: var(--text-main);
+      }
+
+      .markdown-body blockquote {
+        margin: 1.2rem 0;
+        padding: 0.6rem 1.2rem;
+        border-left: 3px solid var(--accent);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-muted);
+        border-radius: 0 10px 10px 0;
+      }
+
+      .markdown-body hr {
+        border: none;
+        border-top: 1px solid var(--glass-border);
+        margin: 2.2rem 0;
+      }
+
+      .markdown-body table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.2rem 0;
+        font-size: 0.9rem;
+        display: block;
+        overflow-x: auto;
+      }
+      .markdown-body th, .markdown-body td {
+        border: 1px solid var(--glass-border);
+        padding: 0.6rem 0.8rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      .markdown-body th {
+        background: rgba(255, 255, 255, 0.04);
+        font-family: var(--font-heading);
+        color: var(--text-main);
+      }
+
+      .markdown-body a { color: var(--accent); text-decoration: underline; text-decoration-color: rgba(110, 231, 183, 0.4); }
+    </style>
+  </head>
+  <body>
+    <div id="blob"></div>
+
+    <main>
+      <div class="back-links reveal">
+        <a class="back-link" href="../">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          Zpět na prompty
+        </a>
+        <a class="back-link" href="../../">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          Zpět na web
+        </a>
+      </div>
+
+      <div class="page-header reveal delay-1">
+        <h1>Výzkumné otázky <span class="accent-text">a hypotézy</span></h1>
+        <div class="header-actions">
+          <a class="icon-btn" id="downloadBtn" href="../../prompt-vyzkumne-otazky-hypotezy.md" download="prompt-vyzkumne-otazky-hypotezy.md" title="Stáhnout soubor" aria-label="Stáhnout soubor">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 12.5V6.8C20 5.11984 20 4.27976 19.673 3.63803C19.3854 3.07354 18.9265 2.6146 18.362 2.32698C17.7202 2 16.8802 2 15.2 2H8.8C7.11984 2 6.27976 2 5.63803 2.32698C5.07354 2.6146 4.6146 3.07354 4.32698 3.63803C4 4.27976 4 5.11984 4 6.8V17.2C4 18.8802 4 19.7202 4.32698 20.362C4.6146 20.9265 5.07354 21.3854 5.63803 21.673C6.27976 22 7.1198 22 8.79986 22H12.5M14 11H8M10 15H8M16 7H8M15 19L18 22M18 22L21 19M18 22V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <button class="icon-btn" id="copyBtn" title="Kopírovat" aria-label="Kopírovat">
+            <svg id="copyIcon" class="icon-visible" width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7.5 3H14.6C16.8402 3 17.9603 3 18.816 3.43597C19.5686 3.81947 20.1805 4.43139 20.564 5.18404C21 6.03969 21 7.15979 21 9.4V16.5M6.2 21H14.3C15.4201 21 15.9802 21 16.408 20.782C16.7843 20.5903 17.0903 20.2843 17.282 19.908C17.5 19.4802 17.5 18.9201 17.5 17.8V9.7C17.5 8.57989 17.5 8.01984 17.282 7.59202C17.0903 7.21569 16.7843 6.90973 16.408 6.71799C15.9802 6.5 15.4201 6.5 14.3 6.5H6.2C5.0799 6.5 4.51984 6.5 4.09202 6.71799C3.71569 6.90973 3.40973 7.21569 3.21799 7.59202C3 8.01984 3 8.57989 3 9.7V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.0799 21 6.2 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg id="checkIcon" width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 11L12 14L22 4M16 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698 4.63803C3 5.27976 3 6.11984 3 7.8V16.2C3 17.8802 3 18.7202 3.32698 19.362C3.6146 19.9265 4.07354 20.3854 4.63803 20.673C5.27976 21 6.11984 21 7.8 21H16.2C17.8802 21 18.7202 21 19.362 20.673C19.9265 20.3854 20.3854 19.9265 20.673 19.362C21 18.7202 21 17.8802 21 16.2V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="prompt-box">
+        <div id="promptText" class="markdown-body loading">Načítám prompt…</div>
+      </div>
+    </main>
+
+    <script src="../vendor/marked.min.js"></script>
+    <script>
+      /* ── Core interactive elements: wire these up first, unconditionally ── */
+      const promptUrl = "../../prompt-vyzkumne-otazky-hypotezy.md";
+      const promptEl = document.getElementById("promptText");
+      const copyBtn = document.getElementById("copyBtn");
+      const copyIcon = document.getElementById("copyIcon");
+      const checkIcon = document.getElementById("checkIcon");
+      let rawText = "";
+
+      function fallbackCopy(text) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, text.length);
+        try {
+          document.execCommand("copy");
+        } catch (e) {
+          /* best effort */
+        }
+        document.body.removeChild(ta);
+      }
+
+      let copyResetTimer = null;
+
+      function showCopied() {
+        copyIcon.classList.remove("icon-visible");
+        checkIcon.classList.add("icon-visible");
+        copyBtn.classList.add("copied");
+        copyBtn.setAttribute("title", "Zkopírováno");
+        clearTimeout(copyResetTimer);
+        copyResetTimer = setTimeout(() => {
+          checkIcon.classList.remove("icon-visible");
+          copyIcon.classList.add("icon-visible");
+          copyBtn.classList.remove("copied");
+          copyBtn.setAttribute("title", "Kopírovat");
+        }, 1800);
+      }
+
+      copyBtn.addEventListener("click", () => {
+        showCopied();
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(rawText).catch(() => fallbackCopy(rawText));
+          } else {
+            fallbackCopy(rawText);
+          }
+        } catch (e) {
+          fallbackCopy(rawText);
+        }
+      });
+
+      /* ── Decorative effects: must never block the code above ── */
+      try {
+        const revealEls = document.querySelectorAll(".reveal");
+        if (window.IntersectionObserver) {
+          const io = new IntersectionObserver(
+            (entries, obs) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("active");
+                obs.unobserve(entry.target);
+              });
+            },
+            { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+          );
+          revealEls.forEach((el) => io.observe(el));
+        } else {
+          revealEls.forEach((el) => el.classList.add("active"));
+        }
+      } catch (e) {
+        document.querySelectorAll(".reveal").forEach((el) => el.classList.add("active"));
+      }
+
+      try {
+        const blob = document.getElementById("blob");
+        if (blob) {
+          window.addEventListener("mousemove", (e) => {
+            if (window.innerWidth <= 992) return;
+            const { clientX, clientY } = e;
+            blob.animate(
+              { left: `${clientX}px`, top: `${clientY}px` },
+              { duration: 3000, fill: "forwards" }
+            );
+          });
+        }
+      } catch (e) {
+        /* decorative only */
+      }
+
+      /* ── Content ── */
+      fetch(promptUrl)
+        .then((r) => r.text())
+        .then((text) => {
+          rawText = text;
+          promptEl.innerHTML =
+            typeof marked !== "undefined" ? marked.parse(text) : text;
+          promptEl.classList.remove("loading");
+        })
+        .catch(() => {
+          promptEl.textContent = "Nepodařilo se načíst obsah promptu.";
+          promptEl.classList.remove("loading");
+        });
+    </script>
+  </body>
+</html>

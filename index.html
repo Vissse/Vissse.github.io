@@ -3,6 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      try {
+        if (typeof navigation !== "undefined") {
+          const markBack = (e) => {
+            if (e.viewTransition && navigation.activation && navigation.activation.navigationType === "traverse") {
+              const from = navigation.activation.from ? navigation.activation.from.index : -1;
+              const to = navigation.activation.entry ? navigation.activation.entry.index : -1;
+              if (to < from) document.documentElement.classList.add("vt-back");
+            }
+          };
+          addEventListener("pageswap", markBack);
+          addEventListener("pagereveal", markBack);
+        }
+      } catch (e) {
+        /* decorative only */
+      }
+    </script>
     <title>Vít Šebestík | Osobní web</title>
     <meta name="description" content="Osobní web a portfolio - Vít Šebestík. Zjistěte více o mně a mých projektech." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />

@@ -20,6 +20,37 @@
 }
 
 /* ═══════════════════════════════════════
+   PAGE TRANSITIONS (cross-document View Transitions)
+═══════════════════════════════════════ */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+::view-transition-old(root) { animation-name: vt-slide-out-left; }
+::view-transition-new(root) { animation-name: vt-slide-in-right; }
+
+html.vt-back::view-transition-old(root) { animation-name: vt-slide-out-right; }
+html.vt-back::view-transition-new(root) { animation-name: vt-slide-in-left; }
+
+@keyframes vt-slide-out-left {
+    to { transform: translateX(-12%); opacity: 0; }
+}
+@keyframes vt-slide-in-right {
+    from { transform: translateX(12%); opacity: 0; }
+}
+@keyframes vt-slide-out-right {
+    to { transform: translateX(12%); opacity: 0; }
+}
+@keyframes vt-slide-in-left {
+    from { transform: translateX(-12%); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════
    RESET & GLOBAL
 ═══════════════════════════════════════ */
 * {

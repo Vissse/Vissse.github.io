@@ -4,10 +4,15 @@
 
 ## Ingredience
 
+### Na salát
+
 - 1 okurka
 - 2 rajčata
 - 1/2 červené cibule
 - 50 g listového salátu
+
+### Na zálivku
+
 - 2 lžíce olivového oleje
 - 1 lžíce octa (nebo citronu)
 - sůl a pepř podle chuti

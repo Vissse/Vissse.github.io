@@ -360,93 +360,89 @@
         max-width: 600px;
       }
 
-      .prompt-group + .prompt-group {
-        margin-top: 1.5rem;
+      .filters-wrap {
+        margin-bottom: 2.5rem;
       }
 
-      .prompt-group {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 20px;
-        backdrop-filter: blur(10px);
-        transition: border-color 0.3s;
-      }
-      .prompt-group:has(.group-header[aria-expanded="true"]) {
-        border-color: rgba(110, 231, 183, 0.25);
+      .filter-pill-all {
+        margin-bottom: 1.5rem;
+        font-weight: 600;
       }
 
-      .group-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        gap: 1rem;
-        background: none;
-        border: none;
-        border-radius: 20px;
-        padding: 1.5rem 2rem;
-        cursor: pointer;
-        transition: background 0.3s;
-        font-family: var(--font-sans);
-        color: var(--text-main);
-        text-align: left;
+      .filter-section + .filter-section {
+        margin-top: 1.25rem;
       }
-      .group-header:hover {
-        background: rgba(255, 255, 255, 0.03);
-      }
-      .group-title {
+
+      .filter-section-title {
         font-family: var(--font-heading);
         font-weight: 700;
-        font-size: 1.3rem;
-      }
-      .group-meta {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
         color: var(--text-muted);
-        font-size: 0.9rem;
-        flex-shrink: 0;
-      }
-      .group-chevron {
-        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        color: var(--accent);
-        flex-shrink: 0;
-      }
-      .group-header[aria-expanded="true"] .group-chevron {
-        transform: rotate(180deg);
+        margin-bottom: 0.75rem;
       }
 
-      .group-content {
-        display: grid;
-        grid-template-rows: 0fr;
-        transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      .filter-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
       }
-      .group-content.open {
-        grid-template-rows: 1fr;
+
+      .filter-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 999px;
+        border: 1px solid var(--glass-border);
+        background: var(--glass-bg);
+        color: var(--text-muted);
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: 0.25s;
+        backdrop-filter: blur(10px);
       }
-      .group-content-inner {
-        overflow: hidden;
-        min-height: 0;
+      .filter-pill:hover {
+        border-color: rgba(110, 231, 183, 0.35);
+        color: var(--text-main);
       }
-      .group-content-inner::before {
-        content: "";
-        display: block;
-        height: 1px;
-        margin: 0 2rem;
-        background: linear-gradient(
-          to right,
-          transparent,
-          var(--glass-border) 15%,
-          var(--glass-border) 85%,
-          transparent
-        );
+      .filter-pill.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #0b0c10;
+        font-weight: 600;
+      }
+      .filter-pill.active .pill-count {
+        color: #0b0c10;
+        opacity: 0.65;
+      }
+
+      .pill-count {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        opacity: 0.8;
+      }
+
+      .empty-state {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        padding: 2.75rem 2rem;
+        text-align: center;
+        border: 1px dashed var(--glass-border);
+        border-radius: 20px;
+        background: var(--glass-bg);
+      }
+
+      .u-hidden {
+        display: none !important;
       }
 
       .prompt-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1.25rem;
-        padding: 1.5rem 2rem 1.75rem;
       }
 
       .prompt-card {
@@ -530,631 +526,142 @@
       <div class="page-header reveal">
         <h1>Moje <span class="accent-text">recepty</span></h1>
         <p>
-          Sbírka receptů, které chci ukládat. Klikni na kartu pro zobrazení
-          receptu.
+          Sbírka receptů, které chci ukládat. Vyber si kategorii a klikni na
+          kartu pro zobrazení receptu.
         </p>
       </div>
 
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-asie-btn"
-          aria-expanded="false"
-          aria-controls="group-asie"
-        >
-          <span class="group-title">Asijská kuchyně</span>
-          <span class="group-meta">
-            <span>1 recept</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
+      <div class="filters-wrap reveal delay-1">
+        <button class="filter-pill filter-pill-all active" data-filter="all">
+          Zobrazit vše
         </button>
-        <div class="group-content" id="group-asie">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <a
-                class="prompt-card reveal delay-1"
-                href="kureci-kousky-se-sladkokyselou-omackou/"
-              >
-                <div class="card-image">
-                  <svg
-                    width="30"
-                    height="30"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <circle cx="9" cy="9" r="2" />
-                    <path d="m21 15-5-5L5 21" />
-                  </svg>
-                </div>
-                <h3>Kuřecí kousky se sladkokyselou omáčkou</h3>
-                <p>
-                  Křupavé obalované kuřecí kousky s domácí sladkokyselou
-                  omáčkou a jasmínovou rýží.
-                </p>
-                <span class="prompt-open">Zobrazit recept →</span>
-              </a>
-            </div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Kuchyně</div>
+          <div class="filter-pills">
+            <button class="filter-pill" data-filter="asie">
+              Asijská <span class="pill-count">1</span>
+            </button>
+            <button class="filter-pill" data-filter="italska">
+              Italská <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="mexicka">
+              Mexická <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="blizky-vychod">
+              Blízký východ / Orient <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="americka">
+              Americká <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="cesko">
+              Tradiční česká <span class="pill-count">0</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Typ jídla</div>
+          <div class="filter-pills">
+            <button class="filter-pill" data-filter="salaty">
+              Saláty a lehká jídla <span class="pill-count">1</span>
+            </button>
+            <button class="filter-pill" data-filter="polevky">
+              Polévky <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="testoviny">
+              Těstoviny <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="pecivo-sladke">
+              Pečivo a sladké <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="snidane">
+              Snídaně <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="rychlovky">
+              Rychlovky do 30 minut <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="grilovani">
+              Grilování <span class="pill-count">0</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Příležitost</div>
+          <div class="filter-pills">
+            <button class="filter-pill" data-filter="vanoce">
+              Vánoční a sváteční <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="party">
+              Party / oslavy <span class="pill-count">0</span>
+            </button>
+            <button class="filter-pill" data-filter="mealprep">
+              Meal prep <span class="pill-count">0</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-italska-btn"
-          aria-expanded="false"
-          aria-controls="group-italska"
+      <div class="prompt-grid reveal delay-2" id="recipeGrid">
+        <a
+          class="prompt-card"
+          data-tags="asie"
+          href="kureci-kousky-se-sladkokyselou-omackou/"
         >
-          <span class="group-title">Italská kuchyně</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
+          <div class="card-image">
             <svg
-              class="group-chevron"
-              width="20"
-              height="20"
+              width="30"
+              height="30"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
+              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
             >
-              <path d="m6 9 6 6 6-6" />
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="9" cy="9" r="2" />
+              <path d="m21 15-5-5L5 21" />
             </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-italska">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
           </div>
-        </div>
+          <h3>Kuřecí kousky se sladkokyselou omáčkou</h3>
+          <p>
+            Křupavé obalované kuřecí kousky s domácí sladkokyselou omáčkou a
+            jasmínovou rýží.
+          </p>
+          <span class="prompt-open">Zobrazit recept →</span>
+        </a>
+
+        <a class="prompt-card" data-tags="salaty" href="napriklad-salat/">
+          <div class="card-image">
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="9" cy="9" r="2" />
+              <path d="m21 15-5-5L5 21" />
+            </svg>
+          </div>
+          <h3>Jednoduchý zeleninový salát</h3>
+          <p>
+            Lehký salát se zeleninou a vinagretou — rychlý jako příloha i
+            hlavní chod.
+          </p>
+          <span class="prompt-open">Zobrazit recept →</span>
+        </a>
       </div>
 
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-mexicka-btn"
-          aria-expanded="false"
-          aria-controls="group-mexicka"
-        >
-          <span class="group-title">Mexická kuchyně</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-mexicka">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-blizky-vychod-btn"
-          aria-expanded="false"
-          aria-controls="group-blizky-vychod"
-        >
-          <span class="group-title">Blízký východ / Orient</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-blizky-vychod">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-americka-btn"
-          aria-expanded="false"
-          aria-controls="group-americka"
-        >
-          <span class="group-title">Americká kuchyně</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-americka">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-cesko-btn"
-          aria-expanded="false"
-          aria-controls="group-cesko"
-        >
-          <span class="group-title">Tradiční česká kuchyně</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-cesko">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-salaty-btn"
-          aria-expanded="false"
-          aria-controls="group-salaty"
-        >
-          <span class="group-title">Saláty a lehká jídla</span>
-          <span class="group-meta">
-            <span>1 recept</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-salaty">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <a class="prompt-card reveal delay-1" href="napriklad-salat/">
-                <div class="card-image">
-                  <svg
-                    width="30"
-                    height="30"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <circle cx="9" cy="9" r="2" />
-                    <path d="m21 15-5-5L5 21" />
-                  </svg>
-                </div>
-                <h3>Jednoduchý zeleninový salát</h3>
-                <p>
-                  Lehký salát se zeleninou a vinagretou — rychlý jako příloha i
-                  hlavní chod.
-                </p>
-                <span class="prompt-open">Zobrazit recept →</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-polevky-btn"
-          aria-expanded="false"
-          aria-controls="group-polevky"
-        >
-          <span class="group-title">Polévky</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-polevky">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-testoviny-btn"
-          aria-expanded="false"
-          aria-controls="group-testoviny"
-        >
-          <span class="group-title">Těstoviny</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-testoviny">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-pecivo-sladke-btn"
-          aria-expanded="false"
-          aria-controls="group-pecivo-sladke"
-        >
-          <span class="group-title">Pečivo a sladké</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-pecivo-sladke">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-snidane-btn"
-          aria-expanded="false"
-          aria-controls="group-snidane"
-        >
-          <span class="group-title">Snídaně</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-snidane">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-rychlovky-btn"
-          aria-expanded="false"
-          aria-controls="group-rychlovky"
-        >
-          <span class="group-title">Rychlovky do 30 minut</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-rychlovky">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-grilovani-btn"
-          aria-expanded="false"
-          aria-controls="group-grilovani"
-        >
-          <span class="group-title">Grilování</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-grilovani">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-vanoce-btn"
-          aria-expanded="false"
-          aria-controls="group-vanoce"
-        >
-          <span class="group-title">Vánoční a sváteční recepty</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-vanoce">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-party-btn"
-          aria-expanded="false"
-          aria-controls="group-party"
-        >
-          <span class="group-title">Party jídlo / na oslavy</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-party">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="prompt-group reveal">
-        <button
-          class="group-header"
-          id="group-mealprep-btn"
-          aria-expanded="false"
-          aria-controls="group-mealprep"
-        >
-          <span class="group-title">Meal prep (na celý týden dopředu)</span>
-          <span class="group-meta">
-            <span>0 receptů</span>
-            <svg
-              class="group-chevron"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
-        <div class="group-content" id="group-mealprep">
-          <div class="group-content-inner">
-            <div class="prompt-grid">
-              <p style="color: var(--text-muted); font-size: 0.95rem; padding: 0 0 0.5rem;">
-                Zatím tu nic není — časem přibude.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <p class="empty-state u-hidden" id="emptyState">
+        V této kategorii zatím nic není — časem přibude.
+      </p>
     </main>
 
     <script>
@@ -1171,14 +678,26 @@
       );
       revealEls.forEach((el) => io.observe(el));
 
-      document.querySelectorAll(".group-header").forEach((btn) => {
-        const content = document.getElementById(
-          btn.getAttribute("aria-controls"),
-        );
-        btn.addEventListener("click", () => {
-          const isOpen = btn.getAttribute("aria-expanded") === "true";
-          btn.setAttribute("aria-expanded", String(!isOpen));
-          content.classList.toggle("open", !isOpen);
+      const filterPills = document.querySelectorAll(".filter-pill");
+      const recipeCards = document.querySelectorAll("#recipeGrid .prompt-card");
+      const emptyState = document.getElementById("emptyState");
+
+      function applyFilter(filter) {
+        let visibleCount = 0;
+        recipeCards.forEach((card) => {
+          const tags = (card.dataset.tags || "").split(" ");
+          const show = filter === "all" || tags.includes(filter);
+          card.classList.toggle("u-hidden", !show);
+          if (show) visibleCount += 1;
+        });
+        emptyState.classList.toggle("u-hidden", visibleCount > 0);
+      }
+
+      filterPills.forEach((pill) => {
+        pill.addEventListener("click", () => {
+          filterPills.forEach((p) => p.classList.remove("active"));
+          pill.classList.add("active");
+          applyFilter(pill.dataset.filter);
         });
       });
 

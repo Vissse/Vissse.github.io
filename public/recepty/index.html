@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        try {
+          var nativeVT = "startViewTransition" in document;
+          if (nativeVT) {
+            if (typeof navigation !== "undefined") {
+              var markBack = function (e) {
+                if (e.viewTransition && navigation.activation && navigation.activation.navigationType === "traverse") {
+                  var from = navigation.activation.from ? navigation.activation.from.index : -1;
+                  var to = navigation.activation.entry ? navigation.activation.entry.index : -1;
+                  if (to < from) document.documentElement.classList.add("vt-back");
+                }
+              };
+              addEventListener("pageswap", markBack);
+              addEventListener("pagereveal", markBack);
+            }
+            return;
+          }
+
+          var STORE_KEY = "vt-direction";
+          var navEntries = performance.getEntriesByType ? performance.getEntriesByType("navigation") : [];
+          var navType = navEntries.length ? navEntries[0].type : "navigate";
+          var storedDir = sessionStorage.getItem(STORE_KEY);
+          sessionStorage.removeItem(STORE_KEY);
+          var enterLeft = storedDir === "back" || (!storedDir && navType === "back_forward");
+          document.documentElement.classList.add(enterLeft ? "vt-enter-left" : "vt-enter-right");
+          addEventListener("pageshow", function () {
+            document.documentElement.classList.remove("vt-enter-left", "vt-enter-right");
+          });
+
+          document.addEventListener(
+            "click",
+            function (e) {
+              if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              var a = e.target.closest("a[href]");
+              if (!a || a.hasAttribute("download") || (a.target && a.target !== "" && a.target !== "_self")) return;
+              var url;
+              try {
+                url = new URL(a.href, location.href);
+              } catch (err) {
+                return;
+              }
+              if (url.origin !== location.origin || url.pathname === location.pathname) return;
+              var isBack = a.classList.contains("back-link");
+              e.preventDefault();
+              sessionStorage.setItem(STORE_KEY, isBack ? "back" : "forward");
+              document.documentElement.classList.add(isBack ? "vt-exit-right" : "vt-exit-left");
+              setTimeout(function () {
+                location.href = a.href;
+              }, 260);
+            },
+            true
+          );
+        } catch (e) {
+        }
+      })();
+    </script>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
+    <title>Recepty</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      @view-transition {
+        navigation: auto;
+      }
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation-duration: 0.5s;
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      ::view-transition-old(root) { animation-name: vt-slide-out-left; }
+      ::view-transition-new(root) { animation-name: vt-slide-in-right; }
+      html.vt-back::view-transition-old(root) { animation-name: vt-slide-out-right; }
+      html.vt-back::view-transition-new(root) { animation-name: vt-slide-in-left; }
+      @keyframes vt-slide-out-left { to { transform: translateX(-12%); opacity: 0; } }
+      @keyframes vt-slide-in-right { from { transform: translateX(12%); opacity: 0; } }
+      @keyframes vt-slide-out-right { to { transform: translateX(12%); opacity: 0; } }
+      @keyframes vt-slide-in-left { from { transform: translateX(-12%); opacity: 0; } }
+
+      html.vt-exit-left body { animation: vt-manual-out-left 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      html.vt-exit-right body { animation: vt-manual-out-right 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      html.vt-enter-right body { animation: vt-manual-in-right 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+      html.vt-enter-left body { animation: vt-manual-in-left 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+      @keyframes vt-manual-out-left { to { transform: translateX(-10%); opacity: 0; } }
+      @keyframes vt-manual-out-right { to { transform: translateX(10%); opacity: 0; } }
+      @keyframes vt-manual-in-right { from { transform: translateX(10%); opacity: 0; } }
+      @keyframes vt-manual-in-left { from { transform: translateX(-10%); opacity: 0; } }
+
+      :root {
+        --bg-color: #0b0c10;
+        --text-main: #f0f2f5;
+        --text-muted: #9ba1a6;
+        --accent: #6ee7b7;
+        --accent-glow: rgba(110, 231, 183, 0.4);
+        --accent-hover: #34d399;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --font-sans: "Inter", sans-serif;
+        --font-heading: "Outfit", sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { overflow-x: hidden; }
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        font-family: var(--font-sans);
+        line-height: 1.6;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      h1, h2, h3 { font-family: var(--font-heading); font-weight: 700; line-height: 1.2; }
+      a { text-decoration: none; color: inherit; }
+      .accent-text { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+
+      #blob {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
+        width: 500px;
+        height: 500px;
+        background: linear-gradient(to right, var(--accent), mediumpurple);
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.3;
+        z-index: 0;
+        pointer-events: none;
+        animation: rotate 20s infinite linear;
+        will-change: transform;
+        transform: translateZ(0);
+      }
+      @keyframes rotate {
+        from { rotate: 0deg; }
+        50% { scale: 1 1.2; }
+        to { rotate: 360deg; }
+      }
+
+      main { position: relative; z-index: 2; }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+      }
+      .reveal.active { opacity: 1; transform: translateY(0); }
+      .delay-1 { transition-delay: 0.05s; }
+      .delay-2 { transition-delay: 0.1s; }
+      .delay-3 { transition-delay: 0.15s; }
+      .delay-4 { transition-delay: 0.2s; }
+      .delay-5 { transition-delay: 0.25s; }
+      .delay-6 { transition-delay: 0.3s; }
+      .delay-7 { transition-delay: 0.35s; }
+      .delay-8 { transition-delay: 0.4s; }
+      .delay-9 { transition-delay: 0.45s; }
+      .delay-10 { transition-delay: 0.5s; }
+
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 5rem 5% 6rem;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        transition: 0.3s;
+      }
+      .back-link:hover { color: var(--accent); transform: translateX(-3px); }
+      .back-link svg { flex-shrink: 0; }
+
+      .page-header { margin-bottom: 3rem; }
+      .page-header h1 { font-size: clamp(2.2rem, 5vw, 3rem); letter-spacing: -1px; margin-bottom: 0.75rem; }
+      .page-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 600px; }
+
+      .prompt-group + .prompt-group { margin-top: 1.5rem; }
+
+      .prompt-group {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        transition: border-color 0.3s;
+      }
+      .prompt-group:has(.group-header[aria-expanded="true"]) {
+        border-color: rgba(110, 231, 183, 0.25);
+      }
+
+      .group-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 1rem;
+        background: none;
+        border: none;
+        border-radius: 20px;
+        padding: 1.5rem 2rem;
+        cursor: pointer;
+        transition: background 0.3s;
+        font-family: var(--font-sans);
+        color: var(--text-main);
+        text-align: left;
+      }
+      .group-header:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .group-title { font-family: var(--font-heading); font-weight: 700; font-size: 1.3rem; }
+      .group-meta { display: flex; align-items: center; gap: 1rem; color: var(--text-muted); font-size: 0.9rem; flex-shrink: 0; }
+      .group-chevron { transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--accent); flex-shrink: 0; }
+      .group-header[aria-expanded="true"] .group-chevron { transform: rotate(180deg); }
+
+      .group-content {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .group-content.open { grid-template-rows: 1fr; }
+      .group-content-inner { overflow: hidden; min-height: 0; }
+      .group-content-inner::before {
+        content: "";
+        display: block;
+        height: 1px;
+        margin: 0 2rem;
+        background: linear-gradient(to right, transparent, var(--glass-border) 15%, var(--glass-border) 85%, transparent);
+      }
+
+      .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.25rem;
+        padding: 1.5rem 2rem 1.75rem;
+      }
+
+      .prompt-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 1.75rem;
+        transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: block;
+      }
+
+      .prompt-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(110, 231, 183, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+      }
+
+      .prompt-card h3 { font-size: 1.3rem; margin-bottom: 0.6rem; }
+      .prompt-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.2rem; }
+
+      .prompt-open {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .prompt-card:hover .prompt-open { letter-spacing: 0.5px; }
+    </style>
+  </head>
+  <body>
+    <div id="blob"></div>
+
+    <main>
+      <a class="back-link reveal" href="../">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Zpět na web
+      </a>
+
+      <div class="page-header reveal">
+        <h1>Moje <span class="accent-text">recepty</span></h1>
+        <p>Sbírka receptů, které chci ukládat. Klikni na kartu pro zobrazení receptu.</p>
+      </div>
+
+      <div class="prompt-group reveal">
+        <button class="group-header" id="group-moje-btn" aria-expanded="false" aria-controls="group-moje">
+          <span class="group-title">Moje recepty</span>
+          <span class="group-meta">
+            <span>1 recept</span>
+            <svg class="group-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </button>
+        <div class="group-content" id="group-moje">
+          <div class="group-content-inner">
+      <div class="prompt-grid">
+        <a class="prompt-card reveal delay-1" href="napriklad-salat/">
+          <h3>Jednoduchý zeleninový salát</h3>
+          <p>Lehký salát se zeleninou a vinagretou — rychlý jako příloha i hlavní chod.</p>
+          <span class="prompt-open">Zobrazit recept →</span>
+        </a>
+      </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const revealEls = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("active");
+            obs.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
+      );
+      revealEls.forEach((el) => io.observe(el));
+
+      document.querySelectorAll(".group-header").forEach((btn) => {
+        const content = document.getElementById(btn.getAttribute("aria-controls"));
+        btn.addEventListener("click", () => {
+          const isOpen = btn.getAttribute("aria-expanded") === "true";
+          btn.setAttribute("aria-expanded", String(!isOpen));
+          content.classList.toggle("open", !isOpen);
+        });
+      });
+
+      const blob = document.getElementById("blob");
+      if (blob) {
+        window.addEventListener("mousemove", (e) => {
+          if (window.innerWidth <= 992) return;
+          const { clientX, clientY } = e;
+          blob.animate(
+            { left: `${clientX}px`, top: `${clientY}px` },
+            { duration: 3000, fill: "forwards" }
+          );
+        });
+      }
+    </script>
+  </body>
+</html>

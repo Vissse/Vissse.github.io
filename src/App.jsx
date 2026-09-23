@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react'
 
+const PROJECT_CATEGORIES = [
+  { id: 'all', label: 'Vše' },
+  { id: 'web', label: 'Weby (frontend–backend)' },
+  { id: 'app', label: 'Aplikace' },
+  { id: 'ai', label: 'Analýza a AI' },
+]
+
 export default function App() {
   const [menuActive, setMenuActive] = useState(false)
+  const [projectFilter, setProjectFilter] = useState('all')
 
   useEffect(() => {
     // Reveal on scroll
@@ -131,8 +139,19 @@ export default function App() {
             <h2>Vybrané <span className="accent-text">projekty</span></h2>
             <p>Výběr prací, které dokládají mé zkušenosti napříč vývojem, designem a analýzou dat.</p>
           </div>
+          <div className="filter-pills reveal">
+            {PROJECT_CATEGORIES.map(cat => (
+              <button
+                key={cat.id}
+                className={`filter-pill${projectFilter === cat.id ? ' active' : ''}`}
+                onClick={() => setProjectFilter(cat.id)}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
           <div className="projects-grid">
-            <div className="project-card reveal delay-1">
+            <div className="project-card reveal delay-1" style={{ display: projectFilter === 'all' || projectFilter === 'web' ? undefined : 'none' }}>
               <div className="project-content">
                 <h3>RustTools</h3>
                 <p>Rychlá webová aplikace pro hráče survival hry Rust s mnoha kalkulačkami pro optimalizaci herní strategie.</p>
@@ -141,7 +160,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="project-card reveal delay-2">
+            <div className="project-card reveal delay-2" style={{ display: projectFilter === 'all' || projectFilter === 'app' ? undefined : 'none' }}>
               <div className="project-content">
                 <h3>OmniDesk</h3>
                 <p>Moderní desktopová aplikace pro komplexní správu systému a hromadnou instalaci softwaru přes Winget po čisté instalaci Windows.</p>
@@ -150,7 +169,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="project-card reveal delay-3">
+            <div className="project-card reveal delay-3" style={{ display: projectFilter === 'all' || projectFilter === 'app' ? undefined : 'none' }}>
               <div className="project-content">
                 <h3>Interaktivní seznam přání</h3>
                 <p>Webová aplikace pro správu dárků. Návštěvníci mohou položky procházet a anonymně rezervovat.</p>
@@ -158,7 +177,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="project-card reveal delay-1">
+            <div className="project-card reveal delay-1" style={{ display: projectFilter === 'all' || projectFilter === 'ai' ? undefined : 'none' }}>
               <div className="project-content">
                 <h3>Audio Analysis Tool</h3>
                 <p>Software pro analýzu zvukových korpusů s automatickou detekcí lexikálních jednotek pomocí AI.</p>
@@ -167,7 +186,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="project-card reveal delay-2">
+            <div className="project-card reveal delay-2" style={{ display: projectFilter === 'all' || projectFilter === 'ai' ? undefined : 'none' }}>
               <div className="project-content">
                 <h3>Analýza sentimentu titulků</h3>
                 <p>Bakalářská práce zaměřená na NLP. Skript pro čištění titulků a sestavení korpusu pro analýzu emocí.</p>
@@ -176,7 +195,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="project-card reveal delay-3">
+            <div className="project-card reveal delay-3" style={{ display: projectFilter === 'all' || projectFilter === 'web' ? undefined : 'none' }}>
               <div className="project-content">
                 <h3>MP celní služby</h3>
                 <p>Kompletní redesign a úprava webové prezentace s důrazem na moderní vizuální identitu a responzivitu.</p>
@@ -185,30 +204,28 @@ export default function App() {
               </div>
             </div>
 
-            <div className="project-card reveal delay-1">
+            <div className="project-card reveal delay-1" style={{ display: projectFilter === 'all' || projectFilter === 'web' ? undefined : 'none' }}>
               <div className="project-content">
-                <h3>VAS Solutions</h3>
-                <p>Webová prezentace firmy VAS Solutions.</p>
+                <h3>VAS Solutions s.r.o.</h3>
+                <p>Webová prezentace firmy VAS Solutions s.r.o.</p>
                 <div className="tags"><span>Web Design</span></div>
                 <a href="https://vas-solutions.cz/" target="_blank" className="project-link" rel="noreferrer">Zobrazit web →</a>
               </div>
             </div>
 
-            <div className="project-card reveal delay-2">
+            <div className="project-card reveal delay-2" style={{ display: projectFilter === 'all' || projectFilter === 'web' ? undefined : 'none' }}>
               <div className="project-content">
-                <h3>Librion</h3>
+                <h3>Librion s.r.o.</h3>
                 <p>Webová prezentace v přípravě.</p>
                 <div className="tags"><span>Web Design</span><span>Ve vývoji</span></div>
-                <a href="https://librion.cz/" target="_blank" className="project-link" rel="noreferrer">Zobrazit web →</a>
               </div>
             </div>
 
-            <div className="project-card reveal delay-3">
+            <div className="project-card reveal delay-3" style={{ display: projectFilter === 'all' || projectFilter === 'web' ? undefined : 'none' }}>
               <div className="project-content">
                 <h3>TJ Sokol Polanka</h3>
                 <p>Webová prezentace sportovní jednoty, aktuálně v přípravě.</p>
                 <div className="tags"><span>Web Design</span><span>Ve vývoji</span></div>
-                <a href="https://www.sokol-polanka.cz/" target="_blank" className="project-link" rel="noreferrer">Zobrazit web →</a>
               </div>
             </div>
           </div>

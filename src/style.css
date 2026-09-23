@@ -447,6 +447,36 @@ section {
 /* ═══════════════════════════════════════
    PROJECTS
 ═══════════════════════════════════════ */
+.filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 2.5rem;
+}
+
+.filter-pill {
+    padding: 0.6rem 1.4rem;
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    border-radius: 30px;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+}
+
+.filter-pill:hover {
+    border-color: var(--accent);
+    color: var(--text-main);
+}
+
+.filter-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+}
+
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));

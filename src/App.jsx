@@ -169,7 +169,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="project-card reveal delay-3" style={{ display: projectFilter === 'all' || projectFilter === 'app' ? undefined : 'none' }}>
+            <div className="project-card reveal delay-3" style={{ display: projectFilter === 'all' || projectFilter === 'web' ? undefined : 'none' }}>
               <div className="project-content">
                 <h3>Interaktivní seznam přání</h3>
                 <p>Webová aplikace pro správu dárků. Návštěvníci mohou položky procházet a anonymně rezervovat.</p>

@@ -184,6 +184,33 @@ export default function App() {
                 <a href="https://www.mpcelnisluzby.cz/" target="_blank" className="project-link" rel="noreferrer">Zobrazit web →</a>
               </div>
             </div>
+
+            <div className="project-card reveal delay-1">
+              <div className="project-content">
+                <h3>VAS Solutions</h3>
+                <p>Webová prezentace firmy VAS Solutions.</p>
+                <div className="tags"><span>Web Design</span></div>
+                <a href="https://vas-solutions.cz/" target="_blank" className="project-link" rel="noreferrer">Zobrazit web →</a>
+              </div>
+            </div>
+
+            <div className="project-card reveal delay-2">
+              <div className="project-content">
+                <h3>Librion</h3>
+                <p>Webová prezentace v přípravě.</p>
+                <div className="tags"><span>Web Design</span><span>Ve vývoji</span></div>
+                <a href="https://librion.cz/" target="_blank" className="project-link" rel="noreferrer">Zobrazit web →</a>
+              </div>
+            </div>
+
+            <div className="project-card reveal delay-3">
+              <div className="project-content">
+                <h3>TJ Sokol Polanka</h3>
+                <p>Webová prezentace sportovní jednoty, aktuálně v přípravě.</p>
+                <div className="tags"><span>Web Design</span><span>Ve vývoji</span></div>
+                <a href="https://www.sokol-polanka.cz/" target="_blank" className="project-link" rel="noreferrer">Zobrazit web →</a>
+              </div>
+            </div>
           </div>
         </section>
       </main>

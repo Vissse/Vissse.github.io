@@ -698,6 +698,10 @@ a {
 }
 
 
+.line-ghost-host {
+    position: relative;
+}
+
 .ghost-duplicate {
     position: absolute;
     left: 0;
@@ -710,7 +714,7 @@ a {
 }
 
 .ghost-above-1 {
-    top: 0.95em;
+    top: -0.25em;
     opacity: 0.12;
     transform: translate(-6px, 0);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 75%, black 100%);
@@ -718,7 +722,7 @@ a {
 }
 
 .ghost-above-2 {
-    top: 0.9em;
+    top: -0.3em;
     opacity: 0.08;
     color: var(--sage-light);
     transform: translate(8px, 0);
@@ -727,7 +731,7 @@ a {
 }
 
 .ghost-below-1 {
-    top: 1.32em;
+    top: 0.12em;
     opacity: 0.12;
     transform: translate(5px, 0);
     -webkit-mask-image: linear-gradient(to top, transparent 0%, black 75%, black 100%);
@@ -735,7 +739,7 @@ a {
 }
 
 .ghost-below-2 {
-    top: 1.36em;
+    top: 0.16em;
     opacity: 0.08;
     color: var(--sage-light);
     transform: translate(-7px, 0);

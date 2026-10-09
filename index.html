@@ -5,40 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vít Šebestík | Personal Website</title>
     <meta name="description" content="Personal website and portfolio of Vít Šebestík. Frontend & backend developer with a background in computational linguistics.">
-    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=74">
+    <!-- The font stylesheet is loaded without blocking the first paint (the
+         fonts themselves already swap in): fetched as "print", applied on load. -->
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Jost:wght@200;300;400;500&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Allura&family=Jost:wght@200;300;400;500&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 </head>
 <body>
-    <main>
-        <section id="domu" class="hero-frame">
-            <div class="hero-glow" aria-hidden="true"></div>
-            <div class="hero-contours" aria-hidden="true">
-                <div class="contour-layer contour-1"></div>
-                <div class="contour-layer contour-2"></div>
-                <div class="contour-layer contour-3"></div>
-            </div>
-            <div class="hero-grain" aria-hidden="true"></div>
-
-            <div class="hero-inner">
-                <p class="eyebrow line"><span class="line-inner mono">Frontend × Backend — Language Processing</span></p>
-                <h1 class="hero-title">
-                    <span class="line"><span class="line-inner"><strong>Websites and tools</strong> that</span></span>
-                    <span class="line line-ghost-host"><span class="line-inner accent">make sense<span class="square-dot"></span></span>
-                    <span class="ghost-duplicate ghost-above-1" aria-hidden="true">make sense</span>
-                    <span class="ghost-duplicate ghost-above-2" aria-hidden="true">make sense</span>
-                    <span class="ghost-duplicate ghost-below-1" aria-hidden="true">make sense</span>
-                    <span class="ghost-duplicate ghost-below-2" aria-hidden="true">make sense</span></span>
-                </h1>
-                <p class="hero-sub reveal-up delay-2">I design and build products across frontend, backend, and language processing — with an NLP background from my computational linguistics degree at Masaryk University.</p>
-            </div>
-        </section>
-    </main>
-
-    <script src="script.js?v=38"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

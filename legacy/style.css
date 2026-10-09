@@ -1,0 +1,873 @@
+/* --progress: how far a hero contour layer is "drawn" (0..1).
+   --cover:    how far the section that follows has slid up over this one
+               (0 = not yet, 1 = fully covered). Written by script.js:
+               on <html> for the hero, on each section for the rest. */
+@property --progress {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0;
+}
+
+@property --cover {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+}
+
+/* ═══════════════════════════════════════
+   DESIGN TOKENS — Sage palette (dark hero)
+═══════════════════════════════════════ */
+:root {
+    --sage: #8b9a6e;
+    --sage-light: #a9b78f;
+    --sage-dark: #6d7a54;
+    --cream: #f7f2eb;
+    --beige: #eae2d6;
+
+    --page-bg: #0e0f0a;
+    --frame-bg: #1a1d13;
+    --frame-border: rgba(247, 242, 235, 0.1);
+    --text: var(--cream);
+    --text-muted: #a3a692;
+    --ink: #262a1f;
+    --ink-muted: rgba(38, 42, 31, 0.55);
+    --ink-line: rgba(38, 42, 31, 0.12);
+
+    --font-sans: 'Space Grotesk', sans-serif;
+    --font-display: 'Jost', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --text-xs: 0.8125rem;
+    --text-sm: 0.9375rem;
+    --text-base: 1.0625rem;
+    --text-lg: 1.375rem;
+
+    --sp-1: 0.25rem;
+    --sp-2: 0.5rem;
+    --sp-3: 0.75rem;
+    --sp-4: 1rem;
+    --sp-5: 1.25rem;
+    --sp-6: 1.5rem;
+    --sp-8: 2rem;
+    --sp-12: 3rem;
+    --sp-24: 6rem;
+
+    --transition: 0.25s ease;
+
+    /* One shape and one left edge for every block of the page. */
+    --radius: 28px;
+    --gutter: clamp(1.5rem, 9vw, 8rem);
+
+    /* Dotted paper of the light sections. script.js anchors it to the
+       viewport, so the dots line up across the seams between sections. */
+    --dot-grid: 28px;
+
+    /* Soft-landing distance of the stacked sections. script.js overwrites
+       both with exact pixel values (it is the one that does the maths);
+       these are the equivalents for the moment before it runs. */
+    --landing: 45vh;
+    --landing-settled: calc(var(--landing) * 0.7);
+
+    --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+@media (max-width: 768px) {
+    :root {
+        --radius: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ═══════════════════════════════════════
+   RESET & GLOBAL
+═══════════════════════════════════════ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--page-bg);
+    /* Dark while the hero is on screen, cream once the first section has
+       covered it — the same --cover that drives the hero's own fade-out. */
+    background-color: color-mix(in srgb, var(--cream) calc(var(--cover) * 100%), var(--page-bg));
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    overflow-x: clip;
+}
+
+.mono {
+    font-family: var(--font-mono);
+}
+
+p {
+    color: var(--text-muted);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--transition), border-color var(--transition), background-color var(--transition), opacity var(--transition);
+}
+
+.line,
+.line-inner {
+    display: block;
+}
+
+/* ═══════════════════════════════════════
+   HOW THE PAGE MOVES
+   Everything is one stack of cards: the hero and each section stay pinned
+   while the next one slides up over them. While that happens, the covered
+   card's content rises with the incoming edge (--rise = the full distance
+   it travels) and fades out. Same rule for all of them, driven by --cover.
+═══════════════════════════════════════ */
+.hero-inner,
+.light-section-inner,
+.app-list-wrap,
+.poster-stack {
+    --rise: -100vh;
+    transform: translateY(calc(var(--cover) * var(--rise)));
+    will-change: transform;
+}
+
+.hero-inner,
+.light-section-inner,
+.app-list-wrap {
+    opacity: calc((1 - var(--cover)) * 1.5);
+    will-change: opacity, transform;
+}
+
+/* ═══════════════════════════════════════
+   HERO FRAME (boxed layout)
+═══════════════════════════════════════ */
+.hero-frame {
+    position: sticky;
+    top: 16px;
+    z-index: 0;
+    margin: 16px;
+    min-height: calc(100vh - 32px);
+    border-radius: var(--radius);
+    border: 1px solid var(--frame-border);
+    background: var(--frame-bg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fully covered by the next section: skip painting its blurred glow,
+   blend-mode contours and grain while scrolling. */
+.hero-frame.is-covered {
+    visibility: hidden;
+}
+
+.hero-glow {
+    position: absolute;
+    top: 11.6%;
+    left: 16.4%;
+    translate: -50% -50%;
+    width: 55%;
+    max-width: 620px;
+    aspect-ratio: 1;
+    background: radial-gradient(circle at center, rgba(169, 183, 143, 0.4), transparent 68%);
+    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    filter: blur(30px);
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    animation: glow-fade-in 2s ease-out 0.2s forwards;
+}
+
+@keyframes glow-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.hero-contours {
+    position: absolute;
+    inset: -10%;
+    z-index: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+/* Each layer is drawn in on load (script.js adds .is-drawn at a random
+   moment), then stays tied to the hero's cover, shrinking as it is covered. */
+.contour-layer {
+    position: absolute;
+    inset: 0;
+    opacity: calc(var(--progress) * 0.6);
+    clip-path: circle(calc(var(--progress) * 75%) at var(--cx) var(--cy));
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), clip-path 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.contour-layer.is-drawn {
+    --progress: calc(1 - var(--cover));
+}
+
+.contour-1 {
+    --cx: 22%;
+    --cy: 18%;
+    background: repeating-radial-gradient(circle at var(--cx) var(--cy), transparent 0, transparent 37px, rgba(169, 183, 143, 0.09) 38px, transparent 39px);
+}
+
+.contour-2 {
+    --cx: 82%;
+    --cy: 66%;
+    background: repeating-radial-gradient(circle at var(--cx) var(--cy), transparent 0, transparent 53px, rgba(139, 154, 110, 0.08) 54px, transparent 55px);
+}
+
+.contour-3 {
+    --cx: 55%;
+    --cy: 100%;
+    background: repeating-radial-gradient(circle at var(--cx) var(--cy), transparent 0, transparent 67px, rgba(169, 183, 143, 0.06) 68px, transparent 69px);
+}
+
+.hero-grain {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.12;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    background-image: var(--grain);
+}
+
+/* ═══════════════════════════════════════
+   HERO CONTENT
+═══════════════════════════════════════ */
+.hero-inner {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--sp-8) 8%;
+}
+
+.eyebrow .line-inner {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: var(--sp-6);
+}
+
+.hero-title {
+    position: relative;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2.5rem, 6.5vw, 4.75rem);
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    color: var(--text-muted);
+    max-width: 22ch;
+    margin-bottom: var(--sp-6);
+}
+
+.hero-title strong {
+    font-weight: 500;
+    color: var(--text);
+}
+
+.hero-title .accent {
+    position: relative;
+    font-weight: 500;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--sage-light) 55%, var(--sage) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.square-dot {
+    position: relative;
+    display: inline-block;
+    width: 0.19em;
+    height: 0.19em;
+    margin-left: 0.08em;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--sage-light) 55%, var(--sage) 100%);
+    transform: translateY(-0.03em);
+}
+
+.line-ghost-host {
+    position: relative;
+}
+
+.ghost-duplicate {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    font-weight: 700;
+    color: var(--text-muted);
+    z-index: -1;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.ghost-above-1 {
+    top: -0.25em;
+    opacity: 0.12;
+    transform: translate(-6px, 0);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 75%, black 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 75%, black 100%);
+}
+
+.ghost-above-2 {
+    top: -0.3em;
+    opacity: 0.08;
+    color: var(--sage-light);
+    transform: translate(8px, 0);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 80%, black 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 80%, black 100%);
+}
+
+.ghost-below-1 {
+    top: 0.12em;
+    opacity: 0.12;
+    transform: translate(5px, 0);
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, black 75%, black 100%);
+    mask-image: linear-gradient(to top, transparent 0%, black 75%, black 100%);
+}
+
+.ghost-below-2 {
+    top: 0.16em;
+    opacity: 0.08;
+    color: var(--sage-light);
+    transform: translate(-7px, 0);
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, black 80%, black 100%);
+    mask-image: linear-gradient(to top, transparent 0%, black 80%, black 100%);
+}
+
+.hero-sub {
+    font-size: var(--text-lg);
+    max-width: 46ch;
+    margin-bottom: var(--sp-8);
+}
+
+/* ═══════════════════════════════════════
+   FRAMED BUTTON (dotted corners)
+═══════════════════════════════════════ */
+.btn-frame {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-1) var(--sp-2);
+    transition: transform var(--transition);
+}
+
+.btn-frame-inner {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    padding-bottom: 2px;
+    transition: color var(--transition);
+}
+
+.btn-frame-inner::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--sage);
+    transition: width 0.3s ease;
+}
+
+.btn-frame:hover .btn-frame-inner {
+    color: var(--sage-light);
+}
+
+.btn-frame:hover .btn-frame-inner::after {
+    width: 100%;
+}
+
+.corner {
+    position: absolute;
+    font-size: 0.85rem;
+    color: var(--sage);
+    line-height: 1;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color var(--transition), opacity var(--transition);
+    opacity: 0;
+    transform: rotate(0deg) scale(0.7);
+}
+
+.corner-tl { top: -10px; left: -10px; }
+.corner-br { bottom: -10px; right: -10px; }
+
+.btn-frame:hover .corner {
+    color: var(--sage-light);
+    opacity: 1;
+    transform: rotate(225deg) scale(1.4);
+}
+
+.btn-frame-lg {
+    padding: var(--sp-2) var(--sp-3);
+    margin-top: var(--sp-6);
+}
+
+/* ═══════════════════════════════════════
+   SCROLL NAV (appears on scroll)
+═══════════════════════════════════════ */
+.scroll-nav {
+    position: fixed;
+    top: var(--sp-4);
+    left: 50%;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-5);
+    padding: var(--sp-3) var(--sp-5);
+    background: var(--page-bg);
+    border: 1px solid var(--frame-border);
+    border-radius: 999px;
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.scroll-nav.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+.scroll-nav .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cream);
+    line-height: 0;
+    transition: color var(--transition);
+}
+
+.scroll-nav .logo:hover {
+    color: var(--sage-light);
+}
+
+.scroll-nav-sep {
+    width: 1px;
+    height: 20px;
+    background: linear-gradient(180deg, transparent, rgba(247, 242, 235, 0.35) 30%, rgba(247, 242, 235, 0.35) 70%, transparent);
+}
+
+.scroll-nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    line-height: 1;
+}
+
+.scroll-nav-links a {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cream);
+}
+
+.scroll-nav-links a:hover {
+    color: var(--sage-light);
+}
+
+/* ═══════════════════════════════════════
+   LIGHT SECTIONS (the stack of cards after the hero)
+═══════════════════════════════════════ */
+/* Every section sticks in place while the next one slides up over it, the
+   same way the first one covers the hero, so each needs a higher z-index
+   than the one before. (The last one sticks too: that is what lets it
+   finish its soft landing, which script.js draws by lifting it.) */
+.light-section {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    min-height: 100vh;
+    background-color: var(--cream);
+    background-image: radial-gradient(circle, rgba(38, 42, 31, 0.09) 1px, transparent 1px);
+    background-size: var(--dot-grid) var(--dot-grid);
+    color: var(--ink);
+    overflow: hidden;
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.15);
+    /* Lifted by JS (soft landing), so keep it on its own layer. */
+    will-change: transform;
+}
+
+.light-section::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.05;
+    pointer-events: none;
+    border-radius: inherit;
+    background-image: var(--grain);
+}
+
+#web-projects { z-index: 1; }
+#app-projects { z-index: 2; }
+#o-mne { z-index: 3; }
+#kontakt { z-index: 4; }
+
+/* Taller than the viewport on purpose: after arriving at a section (menu
+   jump or scrolling) the next one is still just below the screen, so only
+   this section's own content is visible. */
+#web-projects,
+#app-projects,
+#o-mne {
+    min-height: calc(100vh + var(--landing-settled));
+}
+
+/* Extra scroll room so the last section can finish its soft landing while
+   still pinned (sticky can only pin inside <main>'s content). */
+.scroll-tail {
+    height: var(--landing);
+}
+
+.light-section-inner {
+    position: relative;
+    z-index: 1;
+    padding: var(--sp-24) var(--gutter) var(--sp-12);
+}
+
+.light-section .index-label {
+    display: block;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--sage-dark);
+    margin-bottom: var(--sp-4);
+}
+
+.light-section .section-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: var(--sp-4);
+}
+
+.light-section .section-lead {
+    font-size: var(--text-lg);
+    color: var(--ink-muted);
+    max-width: 46ch;
+}
+
+/* ═══════════════════════════════════════
+   BINARY FIELD (0s and 1s flowing along the seam between Webs and Apps)
+═══════════════════════════════════════ */
+/* A tilted strip that is centred on the top edge of the Apps section, so it
+   straddles the seam between Web Projects and App Projects and moves with it
+   as Apps slides up. It runs from the top-right corner down to the left, like
+   the carousel band, and fills the otherwise empty stretch there. Two masks
+   multiplied together: one fades it out toward the strip's long edges, the other
+   is a band of visibility that slowly sweeps along it so the bits seem to flow. */
+#app-projects {
+    overflow: visible; /* the strip reaches up over the section above */
+}
+
+.binary-field {
+    position: absolute;
+    left: -4%;
+    top: -24vh;
+    width: 150%;
+    height: 52vh;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.95;
+    transform-origin: 3% 50%;
+    transform: rotate(-26deg);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%),
+                        linear-gradient(90deg, transparent 0%, #000 24%, #000 60%, transparent 92%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%),
+                linear-gradient(90deg, transparent 0%, #000 24%, #000 60%, transparent 92%);
+    -webkit-mask-size: 100% 100%, 240% 100%;
+    mask-size: 100% 100%, 240% 100%;
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+    animation: binary-sweep 18s ease-in-out infinite alternate;
+}
+
+@keyframes binary-sweep {
+    /* moves from the right (top-right corner) toward the left */
+    from { -webkit-mask-position: 0 0, 100% 0; mask-position: 0 0, 100% 0; }
+    to   { -webkit-mask-position: 0 0, 0% 0;   mask-position: 0 0, 0% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .binary-field { animation: none; }
+}
+
+/* ═══════════════════════════════════════
+   WEB PROJECTS / APP PROJECTS layout
+═══════════════════════════════════════ */
+/* Web Projects sits on the left (the carousel band fills the rest); App
+   Projects mirrors it on the right. On narrow screens both stay a normal
+   full-width column. */
+@media (min-width: 900px) {
+    #app-projects .light-section-inner {
+        max-width: 780px;
+        margin: 0 0 0 auto;
+        padding-left: 6%;
+    }
+}
+
+/* ═══════════════════════════════════════
+   APP LIST (editorial rows, no imagery)
+═══════════════════════════════════════ */
+/* Under the right-aligned App Projects heading, on the left (full-width
+   column on narrow screens). Rises and fades like the heading block. */
+.app-list-wrap {
+    position: relative;
+    z-index: 1;
+    padding: 0 var(--gutter) var(--sp-12);
+}
+
+@media (min-width: 900px) {
+    .app-list-wrap {
+        max-width: 780px;
+        margin: 0 auto 0 0;
+        padding-right: 0;
+    }
+}
+
+.app-list {
+    border-top: 1px solid var(--ink-line);
+}
+
+.app-row {
+    display: grid;
+    grid-template-columns: 3rem 1fr 1.4fr;
+    align-items: baseline;
+    gap: var(--sp-6);
+    padding: var(--sp-8) 0;
+    border-bottom: 1px solid var(--ink-line);
+    transition: padding-left var(--transition);
+}
+
+.app-row:hover {
+    padding-left: var(--sp-3);
+}
+
+.app-row-index {
+    font-size: var(--text-sm);
+    color: var(--sage-dark);
+}
+
+.app-row-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    color: var(--ink);
+}
+
+.app-row-desc {
+    color: var(--ink-muted);
+    font-size: var(--text-base);
+    max-width: 52ch;
+}
+
+@media (max-width: 700px) {
+    .app-row {
+        grid-template-columns: 2.5rem 1fr;
+    }
+    .app-row-desc {
+        grid-column: 2 / -1;
+    }
+}
+
+/* ═══════════════════════════════════════
+   ABOUT (name behind the photo)
+═══════════════════════════════════════ */
+.about-hero {
+    position: relative;
+    margin-top: calc(-1 * var(--sp-4));
+    text-align: center;
+}
+
+.about-photo {
+    position: relative;
+    z-index: 0;
+    width: clamp(220px, 26vw, 360px);
+    /* Matches the source photo's own content region (the figure fills it
+       bottom-up) so nothing of the person is cropped — only the large
+       blank margin above the head is trimmed. */
+    aspect-ratio: 8 / 15;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.about-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 100%;
+    /* Fades the bottom edge into nothing instead of a hard cutoff line. */
+    mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
+}
+
+.about-name {
+    position: relative;
+    z-index: 1;
+    margin-top: clamp(-13rem, -26vw, -9rem);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(3rem, 9vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+}
+
+.about-desc {
+    position: relative;
+    z-index: 2;
+    max-width: 46ch;
+    margin: var(--sp-2) auto 0;
+    color: var(--ink-muted);
+    font-size: var(--text-lg);
+}
+
+@media (max-width: 700px) {
+    .about-photo {
+        width: clamp(180px, 55vw, 260px);
+    }
+}
+
+/* ═══════════════════════════════════════
+   POSTER STACK (coverflow-style auto-rotating)
+═══════════════════════════════════════ */
+/* The carousel is a diagonal band (top-right → bottom-left). It lives in a
+   zero-height sticky layer that sits exactly where the Web Projects section
+   starts, so it pins and scrolls together with that section — but, being
+   above the following sections in z-order, it can ride over them instead of
+   being clipped by them. It rises with the Web Projects text (same
+   --cover), but never fades. */
+.poster-layer {
+    position: sticky;
+    top: 0;
+    height: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.poster-stack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    touch-action: pan-y;
+    user-select: none;
+    pointer-events: none; /* only the cards themselves are interactive */
+}
+
+.poster-stack.dragging {
+    cursor: grabbing;
+}
+
+.poster-ring {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+
+.poster-card {
+    position: absolute;
+    top: 50%;
+    left: 52%;
+    width: 460px;
+    --spread-radius: 560px;
+    display: block;
+    color: var(--cream);
+    text-decoration: none;
+    cursor: grab;
+    will-change: transform;
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+.poster-stack.dragging .poster-card {
+    cursor: grabbing;
+}
+
+.poster-card-image {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--poster-bg) center/cover no-repeat, var(--ink);
+    box-shadow: 0 20px 50px rgba(38, 42, 31, 0.2);
+}
+
+.poster-card-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+.poster-title {
+    position: absolute;
+    left: var(--sp-4);
+    right: var(--sp-4);
+    bottom: var(--sp-4);
+    z-index: 1;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--cream);
+}
+
+@media (max-width: 700px) {
+    .poster-card {
+        top: 54%;
+        left: 56%;
+        width: 300px;
+        --spread-radius: 368px;
+    }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 768px) {
+    .hero-frame {
+        margin: 10px;
+        min-height: calc(100vh - 20px);
+    }
+
+    .hero-title {
+        max-width: 100%;
+    }
+}

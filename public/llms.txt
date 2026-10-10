@@ -1,0 +1,30 @@
+# Vít Šebestík
+
+> Personal website and portfolio of Vít Šebestík: developer and IT specialist at Librion, with a master's degree in computational linguistics from the Faculty of Arts, Masaryk University (2026). Works across frontend, backend and language processing.
+
+The site is a single page. Sections: web projects, app projects, about, contact (a message form).
+
+## Web projects
+
+- [RustTools](https://www.rust-tools.eu/)
+- [VAS Solutions s.r.o.](https://www.vas-solutions.cz/)
+- Also: Librion s.r.o., TJ Sokol Polanka, MP celní služby, Wishlist App, Obrazy od Ameli
+
+## App projects
+
+- Audio Analysis Tool: software for analyzing audio corpora with automatic AI-based detection of lexical units.
+- Subtitle Sentiment Analysis: bachelor's thesis in NLP, a script for cleaning subtitles and building a corpus for emotion analysis.
+- OmniDesk: a desktop app for full PC management in one place, including bulk software installs via Winget after a clean Windows install.
+- GLPI Agent Enhancement: an extension of the GLPI agent, a configurable script that scans an IP range in parallel, reports to GLPI and logs every run.
+
+## About
+
+- Role: Developer, IT Specialist at Librion
+- Education: Master's degree (Mgr.), Computational Linguistics, Faculty of Arts, Masaryk University, 2026
+- Works across: frontend, backend, language processing
+- Approach: technical precision, analytical thinking, a sense of design
+
+## Contact
+
+- Contact form: https://www.vit-sebestik.online/#kontakt
+- Website: https://www.vit-sebestik.online/

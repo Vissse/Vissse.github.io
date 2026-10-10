@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { appProjects } from '@/data/projects';
 import { AppPreview } from '@/components/AppPreview';
 import { PosterStrip } from '@/components/PosterCarousel';
+import { ContactForm } from '@/components/ContactForm';
+import { ContactOrnament } from '@/components/ContactOrnament';
+import { reveal } from '@/lib/reveal';
 import { FLOW_QUERY } from '@/lib/breakpoints';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 
@@ -15,9 +18,6 @@ interface SectionProps {
   animate?: boolean;
 }
 
-// Marks an element to appear `delay` ms after its section arrives (see
-// [data-reveal] in main.css; stackScroll sets .is-revealed on the section).
-const reveal = (delay: number) => ({ 'data-reveal': '', style: { '--d': delay } as CSSProperties });
 
 function Section({ id, label, title, lead, children, animate = false }: SectionProps) {
   const at = (delay: number) => (animate ? reveal(delay) : {});
@@ -235,5 +235,15 @@ export function About() {
 }
 
 export function Contact() {
-  return <Section id="kontakt" label="Contact" title="Contact" lead="Coming soon." animate />;
+  return (
+    <Section
+      id="kontakt"
+      label="Contact"
+      title="Contact"
+      animate
+    >
+      <ContactForm />
+      <ContactOrnament />
+    </Section>
+  );
 }

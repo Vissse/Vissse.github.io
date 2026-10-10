@@ -1854,6 +1854,179 @@ a {
 
 
 /* ═══════════════════════════════════════
+   CONTACT FORM
+   Minimal: fields are just a hairline with a mono label above; the line
+   turns sage on focus and red when something needs fixing.
+═══════════════════════════════════════ */
+.contact-form {
+    display: grid;
+    gap: var(--sp-6);
+    max-width: 34rem;
+    margin-top: var(--sp-8);
+}
+
+/* The right side: a line-drawn envelope in a halo of rings (as in About and
+   Apps). The halo belongs to the envelope itself (::before, centred on it),
+   so the two share one centre at every size. Only where there is room. */
+.contact-ornament { display: none; }
+
+@media (min-width: 900px) {
+    .contact-ornament {
+        display: block;
+        position: absolute;
+        top: 50%;
+        right: var(--gutter);
+        z-index: 1;
+        width: clamp(240px, 27vw, 420px);
+        translate: 0 -50%;
+        pointer-events: none;
+    }
+    .contact-ornament::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: -1;
+        width: 270%;
+        aspect-ratio: 1;
+        translate: -50% -50%;
+        background:
+            radial-gradient(circle, rgba(169, 183, 143, 0.4), transparent 46%),
+            repeating-radial-gradient(circle, transparent 0, transparent 53px, rgba(109, 122, 84, 0.14) 54px, transparent 55px);
+        -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0.6) 38%, transparent 68%);
+        mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0.6) 38%, transparent 68%);
+    }
+    .contact-ornament svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .co-body { fill: var(--cream); stroke: var(--sage-dark); stroke-width: 1; }
+    .co-fold { fill: none; stroke: var(--ink-line); stroke-width: 1; }
+    .co-flap { fill: none; stroke: var(--sage-dark); stroke-width: 1; stroke-linejoin: round; }
+    .co-seal { fill: var(--sage); }
+}
+
+.contact-field { display: grid; gap: var(--sp-2); }
+.contact-field label {
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sage-dark);
+}
+.contact-field input,
+.contact-field textarea {
+    width: 100%;
+    padding: var(--sp-2) 0 var(--sp-3);
+    font: inherit;
+    font-size: var(--text-base); /* 16px: iOS doesn't zoom the page on focus */
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--ink-line);
+    border-radius: 0;
+    resize: vertical;
+    transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.contact-field textarea { min-height: 7.5rem; line-height: 1.5; }
+.contact-field input:hover,
+.contact-field textarea:hover { border-bottom-color: var(--sage); }
+.contact-field input:focus,
+.contact-field textarea:focus {
+    outline: none;
+    border-bottom-color: var(--sage-dark);
+    box-shadow: 0 1px 0 var(--sage-dark);
+}
+.contact-field.has-error input,
+.contact-field.has-error textarea {
+    border-bottom-color: var(--wrong);
+    box-shadow: 0 1px 0 var(--wrong);
+}
+.contact-error {
+    font-size: var(--text-xs);
+    color: var(--wrong);
+}
+
+.contact-trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3) var(--sp-5);
+}
+.contact-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: 8px 18px;
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cream);
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-out, border-color 0.2s ease-out, transform 0.12s ease-out;
+}
+.contact-submit:hover { background: var(--sage-dark); border-color: var(--sage-dark); }
+.contact-submit:active { transform: scale(0.97); }
+.contact-submit:focus-visible { outline: 2px solid var(--sage-dark); outline-offset: 3px; }
+.contact-submit:disabled { cursor: progress; background: var(--sage-dark); border-color: var(--sage-dark); }
+.contact-status {
+    min-height: 1.4em;
+    font-size: var(--text-sm);
+    color: var(--wrong);
+}
+
+.contact-sent {
+    display: grid;
+    justify-items: start;
+    gap: var(--sp-2);
+    max-width: 34rem;
+    margin-top: var(--sp-8);
+    animation: contact-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes contact-in {
+    from { opacity: 0; transform: translateY(12px); }
+}
+.contact-sent-mark {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-bottom: var(--sp-2);
+    font-size: 1.1rem;
+    color: #fff;
+    background: var(--sage-dark);
+    border-radius: 50%;
+    animation: pv-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+.contact-sent-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--text-lg);
+    color: var(--ink);
+}
+.contact-sent-text { color: var(--ink-muted); }
+.contact-link {
+    padding: 0;
+    margin-top: var(--sp-3);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sage-dark);
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--sage);
+    cursor: pointer;
+}
+.contact-link:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+/* ═══════════════════════════════════════
    POSTER STACK (coverflow-style auto-rotating)
 ═══════════════════════════════════════ */
 /* The carousel is a diagonal band (top-right → bottom-left). It lives in a

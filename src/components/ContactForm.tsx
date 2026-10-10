@@ -19,7 +19,7 @@ function validate(data: Record<Field, string>): Errors {
   const errors: Errors = {};
   if (!data.name.trim()) errors.name = 'Tell me your name.';
   if (!EMAIL.test(data.email.trim())) errors.email = 'Enter an e-mail address I can reply to.';
-  if (data.message.trim().length < 10) errors.message = 'Write a few words more.';
+  if (!data.message.trim()) errors.message = 'Write a message first.';
   return errors;
 }
 

@@ -243,6 +243,17 @@ export function Contact() {
       animate
     >
       <ContactForm />
+      <p className="contact-profiles mono" {...reveal(500)}>
+        <a href="https://github.com/Vissse" target="_blank" rel="noreferrer" className="contact-link">GitHub</a>
+        <a
+          href="https://www.linkedin.com/in/v%C3%ADt-%C5%A1ebest%C3%ADk-9853aa415/"
+          target="_blank"
+          rel="noreferrer"
+          className="contact-link"
+        >
+          LinkedIn
+        </a>
+      </p>
       <ContactOrnament />
     </Section>
   );

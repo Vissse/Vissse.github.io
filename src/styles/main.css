@@ -1865,9 +1865,8 @@ a {
     margin-top: var(--sp-8);
 }
 
-/* The right side: a line-drawn envelope in a halo of rings (as in About and
-   Apps). The halo belongs to the envelope itself (::before, centred on it),
-   so the two share one centre at every size. Only where there is room. */
+/* The right side: a halo of rings (as in About and Apps), centred on this
+   empty box. Only where there is room. */
 .contact-ornament { display: none; }
 
 @media (min-width: 900px) {
@@ -1878,6 +1877,7 @@ a {
         right: var(--gutter);
         z-index: 1;
         width: clamp(240px, 27vw, 420px);
+        aspect-ratio: 360 / 250;
         translate: 0 -50%;
         pointer-events: none;
     }
@@ -1896,11 +1896,6 @@ a {
         -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0.6) 38%, transparent 68%);
         mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0.6) 38%, transparent 68%);
     }
-    .contact-ornament svg { display: block; width: 100%; height: auto; overflow: visible; }
-    .co-body { fill: var(--cream); stroke: var(--sage-dark); stroke-width: 1; }
-    .co-fold { fill: none; stroke: var(--ink-line); stroke-width: 1; }
-    .co-flap { fill: none; stroke: var(--sage-dark); stroke-width: 1; stroke-linejoin: round; }
-    .co-seal { fill: var(--sage); }
 }
 
 .contact-field { display: grid; gap: var(--sp-2); }
@@ -2012,6 +2007,20 @@ a {
     color: var(--ink);
 }
 .contact-sent-text { color: var(--ink-muted); }
+.contact-note {
+    max-width: 34rem;
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+}
+.contact-profiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-5);
+    margin-top: var(--sp-8);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
 .contact-link {
     padding: 0;
     margin-top: var(--sp-3);

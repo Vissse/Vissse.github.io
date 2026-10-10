@@ -17,8 +17,8 @@ export const webProjects: WebProject[] = [
   { title: 'RustTools', seed: 'rusttools-project', href: 'https://www.rust-tools.eu/' },
   { title: 'VAS Solutions s.r.o.', seed: 'vas-solutions-project', href: 'https://www.vas-solutions.cz/' },
   { title: 'Librion s.r.o.', seed: 'librion-project' },
-  { title: 'TJ Sokol Polanka', seed: 'tj-sokol-polanka' },
-  { title: 'MP celní služby', seed: 'mp-celni-sluzby' },
+  { title: 'TJ Sokol Polanka', seed: 'tj-sokol-polanka', href: 'https://www.sokol-polanka.cz/' },
+  { title: 'MP celní služby', seed: 'mp-celni-sluzby', href: 'https://www.mpcelnisluzby.cz/' },
   { title: 'Wishlist App', seed: 'wishlist-app' },
   { title: 'Obrazy od Ameli', seed: 'obrazy-od-ameli' },
 ];

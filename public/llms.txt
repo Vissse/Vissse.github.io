@@ -8,7 +8,9 @@ The site is a single page. Sections: web projects, app projects, about, contact 
 
 - [RustTools](https://www.rust-tools.eu/)
 - [VAS Solutions s.r.o.](https://www.vas-solutions.cz/)
-- Also: Librion s.r.o., TJ Sokol Polanka, MP celní služby, Wishlist App, Obrazy od Ameli
+- [TJ Sokol Polanka](https://www.sokol-polanka.cz/)
+- [MP celní služby](https://www.mpcelnisluzby.cz/)
+- Also: Librion s.r.o., Wishlist App, Obrazy od Ameli
 
 ## App projects
 
@@ -27,4 +29,7 @@ The site is a single page. Sections: web projects, app projects, about, contact 
 ## Contact
 
 - Contact form: https://www.vit-sebestik.online/#kontakt
+- [GitHub](https://github.com/Vissse)
+- [LinkedIn](https://www.linkedin.com/in/v%C3%ADt-%C5%A1ebest%C3%ADk-9853aa415/)
+- [Privacy policy](https://www.vit-sebestik.online/privacy/)
 - Website: https://www.vit-sebestik.online/

@@ -124,6 +124,10 @@ export function ContactForm() {
         </button>
         <p className="contact-status" role="status" aria-live="polite">{status === 'error' ? problem : ''}</p>
       </div>
+      <p className="contact-note" {...reveal(460)}>
+        By sending this message you agree to it being processed as described in the{' '}
+        <a href="/privacy/" className="contact-link">privacy policy</a>.
+      </p>
     </form>
   );
 }

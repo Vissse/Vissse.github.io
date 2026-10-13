@@ -94,7 +94,7 @@ if (promptEl) {
     });
   };
 
-  fetch("prompt.md")
+  fetch(promptEl.getAttribute("data-src") || "prompt.md")
     .then(function (r) {
       return r.text();
     })
